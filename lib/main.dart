@@ -1,48 +1,16 @@
 import 'package:flutter/material.dart';
 
+import 'package:housekeeper/pages/home.dart';
+import 'package:housekeeper/pages/loading.dart';
+import 'package:housekeeper/pages/groceryList.dart';
+
 void main() {
   runApp(MaterialApp(
-    home: App(),
+    initialRoute: "/home",
+    routes: {
+      "/": (context) => Loading(),
+      "/home": (context) => Home(),
+      "/groceryList": (context) => GroceryList(),
+    },
   ));
-}
-
-class App extends StatefulWidget {
-  @override
-  _AppState createState() => _AppState();
-}
-
-class _AppState extends State<App> {
-  List<String> groceries = ["Leite", "Cereais", "Bolachas", "Tremoços"];
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.grey[900],
-      appBar: AppBar(
-        title: Text("House Keeper"),
-        elevation: 0,
-      ),
-      body: Padding(
-        padding: EdgeInsets.fromLTRB(30, 40, 30, 0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: groceries.map((grocery) {
-            return Center(
-              child: Padding(
-                padding: EdgeInsets.all(8.0),
-                child: Text(
-                  grocery,
-                  style: TextStyle(
-                    fontSize: 28,
-                    letterSpacing: 2,
-                    color: Colors.grey[200],
-                  ),
-                ),
-              ),
-            );
-          }).toList(),
-        ),
-      ),
-    );
-  }
 }
