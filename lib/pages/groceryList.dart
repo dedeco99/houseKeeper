@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 
-import "../grocery.dart";
+import 'package:housekeeper/components/groceryCard.dart';
 
-import "../groceryCard.dart";
+import "package:housekeeper/services/groceries.dart";
+import 'package:housekeeper/services/grocery.dart';
 
 class GroceryList extends StatefulWidget {
   @override
@@ -10,40 +11,39 @@ class GroceryList extends StatefulWidget {
 }
 
 class _GroceryListState extends State<GroceryList> {
-  List<Grocery> groceries = [
-    Grocery(name: "Leite", price: 1.5, quantity: 4),
-    Grocery(name: "Cereais", price: 3.2, quantity: 2),
-    Grocery(name: "Bolachas", price: 0.99, quantity: 6),
-    Grocery(name: "Tremoços", price: 2.35, quantity: 3)
-  ];
+  List<Grocery> groceryList = [];
+
+  @override
+  void initState() {
+    super.initState();
+
+    getGroceryList();
+  }
+
+  void getGroceryList() async {
+    Groceries groceries = Groceries(store: "lidl");
+
+    await groceries.getList();
+
+    setState(() => groceryList = groceries.list);
+  }
 
   @override
   Widget build(BuildContext context) {
-    print("build ran");
-
     return Scaffold(
       backgroundColor: Colors.grey[900],
       appBar: AppBar(
         title: Text("House Keeper"),
         elevation: 0,
       ),
-      body: Padding(
-        padding: EdgeInsets.fromLTRB(30, 40, 30, 0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: groceries
-              .map(
-                (grocery) => new GroceryCard(
-                  grocery: grocery,
-                  onDelete: () {
-                    setState(() {
-                      groceries.remove(grocery);
-                    });
-                  },
-                ),
-              )
-              .toList(),
-        ),
+      body: ListView.builder(
+        itemCount: groceryList.length,
+        itemBuilder: (context, index) {
+          return GroceryCard(
+            grocery: groceryList[index],
+            onDelete: () => setState(() => groceryList.removeAt(index)),
+          );
+        },
       ),
     );
   }

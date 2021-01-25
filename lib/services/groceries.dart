@@ -1,9 +1,11 @@
 import "package:http/http.dart";
 import "dart:convert";
 
+import 'package:housekeeper/services/grocery.dart';
+
 class Groceries {
   String store;
-  List list;
+  List<Grocery> list = [];
 
   Groceries({this.store});
 
@@ -16,10 +18,17 @@ class Groceries {
 
       if (response.statusCode == 404) throw json["message"];
 
-      list = json["data"];
+      for (var i = 0; i < json["data"].length; i++) {
+        var grocery = json["data"][i];
+
+        list.add(new Grocery(
+          name: grocery["name"],
+          price: grocery["price"],
+          quantity: grocery["quantity"],
+        ));
+      }
     } catch (err) {
       print("error $err");
-      list = ["error"];
     }
   }
 }

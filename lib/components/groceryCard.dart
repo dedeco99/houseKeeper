@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import "grocery.dart";
+import 'package:housekeeper/services/grocery.dart';
 
 class GroceryCard extends StatelessWidget {
   final Grocery grocery;

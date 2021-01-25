@@ -10,11 +10,6 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    data = ModalRoute.of(context).settings.arguments;
-
-    print(data["store"]);
-    print(data["list"]);
-
     return Scaffold(
       backgroundColor: Colors.grey[900],
       appBar: AppBar(
