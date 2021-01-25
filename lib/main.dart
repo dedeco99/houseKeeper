@@ -6,7 +6,7 @@ import 'package:housekeeper/pages/groceryList.dart';
 
 void main() {
   runApp(MaterialApp(
-    initialRoute: "/home",
+    initialRoute: "/",
     routes: {
       "/": (context) => Loading(),
       "/home": (context) => Home(),

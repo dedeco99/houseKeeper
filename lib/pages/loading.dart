@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import "package:http/http.dart";
-import "dart:convert";
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+
+import "package:housekeeper/services/groceries.dart";
 
 class Loading extends StatefulWidget {
   @override
@@ -8,6 +9,18 @@ class Loading extends StatefulWidget {
 }
 
 class _LoadingState extends State<Loading> {
+  void getGroceryList() async {
+    Groceries groceries = Groceries(store: "lidl");
+
+    await groceries.getList();
+
+    Navigator.pushReplacementNamed(
+      context,
+      "/home",
+      arguments: {"store": groceries.store, "list": groceries.list},
+    );
+  }
+
   @override
   void initState() {
     super.initState();
@@ -15,27 +28,16 @@ class _LoadingState extends State<Loading> {
     getGroceryList();
   }
 
-  void getGroceryList() async {
-    Response response =
-        await get("https://worldtimeapi.org/api/timezone/Europe/Madrid");
-
-    Map json = jsonDecode(response.body);
-
-    String dateTime = json["datetime"];
-    String offset = json["utc_offset"].substring(1, 3);
-
-    DateTime now = DateTime.parse(dateTime);
-    print(now);
-
-    now = now.add(Duration(hours: int.parse(offset)));
-
-    print(now);
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Text("Loading"),
+      backgroundColor: Colors.grey[900],
+      body: Center(
+        child: SpinKitWave(
+          color: Colors.white,
+          size: 75,
+        ),
+      ),
     );
   }
 }
