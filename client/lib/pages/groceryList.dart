@@ -21,7 +21,7 @@ class _GroceryListState extends State<GroceryList> {
   }
 
   void getGroceryList() async {
-    Groceries groceries = Groceries(store: "lidl");
+    Groceries groceries = Groceries(store: "Lidl");
 
     await groceries.getList();
 
