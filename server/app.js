@@ -17,6 +17,8 @@ app.use(express.json());
 
 app.get("/api/groceries/:store", (req, res) => middleware(req, res, groceries.getGroceries));
 
+app.delete("/api/groceries/:id", (req, res) => middleware(req, res, groceries.deleteGrocery));
+
 app.listen(app.get("port"), () => {
 	console.log("Listening on port", app.get("port"));
 });

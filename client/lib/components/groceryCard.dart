@@ -4,9 +4,8 @@ import 'package:housekeeper/services/grocery.dart';
 
 class GroceryCard extends StatelessWidget {
   final Grocery grocery;
-  final Function onDelete;
 
-  GroceryCard({this.grocery, this.onDelete});
+  GroceryCard({this.grocery});
 
   @override
   Widget build(BuildContext context) {
@@ -49,11 +48,6 @@ class GroceryCard extends StatelessWidget {
                     letterSpacing: 2,
                     color: Colors.grey[200],
                   ),
-                ),
-                TextButton.icon(
-                  onPressed: onDelete,
-                  icon: Icon(Icons.delete),
-                  label: Text("Delete"),
                 ),
               ],
             ),

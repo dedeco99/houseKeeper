@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:housekeeper/components/groceryCard.dart';
 
 import "package:housekeeper/services/groceries.dart";
-import 'package:housekeeper/services/grocery.dart';
 
 class GroceryList extends StatefulWidget {
   @override
@@ -11,7 +10,8 @@ class GroceryList extends StatefulWidget {
 }
 
 class _GroceryListState extends State<GroceryList> {
-  List<Grocery> groceryList = [];
+  Groceries groceries = Groceries(store: "Lidl");
+  bool rebuild = false;
 
   @override
   void initState() {
@@ -21,11 +21,9 @@ class _GroceryListState extends State<GroceryList> {
   }
 
   void getGroceryList() async {
-    Groceries groceries = Groceries(store: "Lidl");
-
     await groceries.getList();
 
-    setState(() => groceryList = groceries.list);
+    setState(() => rebuild = !rebuild);
   }
 
   @override
@@ -37,11 +35,15 @@ class _GroceryListState extends State<GroceryList> {
         elevation: 0,
       ),
       body: ListView.builder(
-        itemCount: groceryList.length,
+        itemCount: groceries.list.length,
         itemBuilder: (context, index) {
-          return GroceryCard(
-            grocery: groceryList[index],
-            onDelete: () => setState(() => groceryList.removeAt(index)),
+          return Dismissible(
+            key: Key(groceries.list[index].id),
+            background: Container(color: Colors.red),
+            child: GroceryCard(grocery: groceries.list[index]),
+            onDismissed: (direction) {
+              groceries.deleteGrocery(groceries.list[index].id);
+            },
           );
         },
       ),
