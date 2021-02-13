@@ -12,6 +12,27 @@ async function getGroceries(event) {
 	return response(200, "GET_GROCERIES", groceries);
 }
 
+async function addGrocery(event) {
+	const { body } = event;
+	const { name, category, store, quantity, price } = body;
+	console.log(body);
+	if (!name || !category || !store || !quantity) {
+		return errors.requiredFieldsMissing;
+	}
+
+	const grocery = new Grocery({
+		name,
+		category,
+		store,
+		quantity,
+		price,
+	});
+
+	await grocery.save();
+
+	return response(201, "ADD_GROCERY", grocery);
+}
+
 async function deleteGrocery(event) {
 	const { params } = event;
 	const { id } = params;
@@ -32,5 +53,6 @@ async function deleteGrocery(event) {
 
 module.exports = {
 	getGroceries,
+	addGrocery,
 	deleteGrocery,
 };

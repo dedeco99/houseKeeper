@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 import 'package:housekeeper/components/groceryCard.dart';
 
@@ -12,6 +13,7 @@ class GroceryList extends StatefulWidget {
 class _GroceryListState extends State<GroceryList> {
   Groceries groceries = Groceries(store: "Lidl");
   bool rebuild = false;
+  RefreshController refreshController = RefreshController();
 
   @override
   void initState() {
@@ -26,6 +28,14 @@ class _GroceryListState extends State<GroceryList> {
     setState(() => rebuild = !rebuild);
   }
 
+  void onRefresh() async {
+    await groceries.getList();
+
+    setState(() => rebuild = !rebuild);
+
+    refreshController.refreshCompleted();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -34,18 +44,32 @@ class _GroceryListState extends State<GroceryList> {
         title: Text("House Keeper"),
         elevation: 0,
       ),
-      body: ListView.builder(
-        itemCount: groceries.list.length,
-        itemBuilder: (context, index) {
-          return Dismissible(
-            key: Key(groceries.list[index].id),
-            background: Container(color: Colors.red),
-            child: GroceryCard(grocery: groceries.list[index]),
-            onDismissed: (direction) {
-              groceries.deleteGrocery(groceries.list[index].id);
-            },
-          );
+      body: SmartRefresher(
+        enablePullDown: true,
+        enablePullUp: true,
+        header: WaterDropMaterialHeader(),
+        controller: refreshController,
+        onRefresh: onRefresh,
+        child: ListView.builder(
+          itemCount: groceries.list.length,
+          itemBuilder: (context, index) {
+            return Dismissible(
+              key: Key(groceries.list[index].id),
+              background: Container(color: Colors.red),
+              child: GroceryCard(grocery: groceries.list[index]),
+              onDismissed: (direction) {
+                groceries.deleteGrocery(groceries.list[index].id);
+              },
+            );
+          },
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          groceries.addGrocery("Krave", "Cereais", "Lidl", 3);
         },
+        child: Icon(Icons.add),
+        backgroundColor: Colors.blue,
       ),
     );
   }

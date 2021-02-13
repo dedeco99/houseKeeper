@@ -1,7 +1,7 @@
 import "package:http/http.dart";
 import "dart:convert";
 
-import 'package:housekeeper/services/grocery.dart';
+import "package:housekeeper/services/grocery.dart";
 
 class Groceries {
   String store;
@@ -18,6 +18,8 @@ class Groceries {
 
       if (response.statusCode == 404) throw json["message"];
 
+      list = [];
+
       for (var i = 0; i < json["data"].length; i++) {
         var grocery = json["data"][i];
 
@@ -28,6 +30,38 @@ class Groceries {
           quantity: grocery["quantity"],
         ));
       }
+    } catch (err) {
+      print("error $err");
+    }
+  }
+
+  Future<void> addGrocery(name, category, store, quantity) async {
+    try {
+      Response response = await post(
+        "http://192.168.1.205:5000/api/groceries",
+        headers: <String, String>{
+          "Content-Type": "application/json; charset=UTF-8",
+        },
+        body: jsonEncode({
+          "name": name,
+          "category": category,
+          "store": store,
+          "quantity": quantity
+        }),
+      );
+
+      Map json = jsonDecode(response.body);
+
+      if (response.statusCode == 404) throw json["message"];
+
+      var grocery = json["data"];
+
+      list.add(new Grocery(
+        id: grocery["_id"],
+        name: grocery["name"],
+        price: grocery["price"],
+        quantity: grocery["quantity"],
+      ));
     } catch (err) {
       print("error $err");
     }
