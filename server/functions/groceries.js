@@ -15,7 +15,7 @@ async function getGroceries(event) {
 async function addGrocery(event) {
 	const { body } = event;
 	const { name, category, store, quantity, price } = body;
-	console.log(body);
+
 	if (!name || !category || !store || !quantity) {
 		return errors.requiredFieldsMissing;
 	}

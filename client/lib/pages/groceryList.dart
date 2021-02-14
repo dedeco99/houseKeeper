@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 import 'package:housekeeper/components/groceryCard.dart';
+import 'package:housekeeper/components/groceryDetail.dart';
 
 import "package:housekeeper/services/groceries.dart";
 
@@ -11,7 +13,7 @@ class GroceryList extends StatefulWidget {
 }
 
 class _GroceryListState extends State<GroceryList> {
-  Groceries groceries = Groceries(store: "Lidl");
+  Groceries groceries = GetIt.instance.get<Groceries>();
   RefreshController refreshController = RefreshController();
 
   void onRefresh() async {
@@ -54,13 +56,27 @@ class _GroceryListState extends State<GroceryList> {
           );
         },
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          groceries.addGrocery("Krave", "Cereais", "Lidl", 3);
-        },
-        child: Icon(Icons.add),
-        backgroundColor: Colors.blue,
-      ),
+      floatingActionButton: AddGroceryFloatingActionButton(),
+    );
+  }
+}
+
+class AddGroceryFloatingActionButton extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return FloatingActionButton(
+      onPressed: () {
+        showBottomSheet(
+          context: context,
+          builder: (context) => Container(
+            color: Colors.grey[900],
+            height: 500,
+            child: GroceryDetail(),
+          ),
+        );
+      },
+      child: Icon(Icons.add),
+      backgroundColor: Colors.blue,
     );
   }
 }

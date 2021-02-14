@@ -43,7 +43,7 @@ class Groceries {
     }
   }
 
-  Future<void> addGrocery(name, category, store, quantity) async {
+  Future<void> addGrocery(name, category, store, quantity, price) async {
     try {
       Response response = await post(
         "http://192.168.1.205:5000/api/groceries",
@@ -54,7 +54,8 @@ class Groceries {
           "name": name,
           "category": category,
           "store": store,
-          "quantity": quantity
+          "quantity": quantity,
+          "price": price,
         }),
       );
 
