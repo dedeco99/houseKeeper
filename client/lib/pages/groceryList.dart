@@ -12,26 +12,10 @@ class GroceryList extends StatefulWidget {
 
 class _GroceryListState extends State<GroceryList> {
   Groceries groceries = Groceries(store: "Lidl");
-  bool rebuild = false;
   RefreshController refreshController = RefreshController();
-
-  @override
-  void initState() {
-    super.initState();
-
-    getGroceryList();
-  }
-
-  void getGroceryList() async {
-    await groceries.getList();
-
-    setState(() => rebuild = !rebuild);
-  }
 
   void onRefresh() async {
     await groceries.getList();
-
-    setState(() => rebuild = !rebuild);
 
     refreshController.refreshCompleted();
   }
@@ -44,25 +28,31 @@ class _GroceryListState extends State<GroceryList> {
         title: Text("House Keeper"),
         elevation: 0,
       ),
-      body: SmartRefresher(
-        enablePullDown: true,
-        enablePullUp: true,
-        header: WaterDropMaterialHeader(),
-        controller: refreshController,
-        onRefresh: onRefresh,
-        child: ListView.builder(
-          itemCount: groceries.list.length,
-          itemBuilder: (context, index) {
-            return Dismissible(
-              key: Key(groceries.list[index].id),
-              background: Container(color: Colors.red),
-              child: GroceryCard(grocery: groceries.list[index]),
-              onDismissed: (direction) {
-                groceries.deleteGrocery(groceries.list[index].id);
+      body: StreamBuilder(
+        stream: groceries.list$,
+        builder: (BuildContext context, AsyncSnapshot snapshot) {
+          if (!snapshot.hasData) return Text("Loading");
+
+          return SmartRefresher(
+            enablePullDown: true,
+            header: WaterDropMaterialHeader(),
+            controller: refreshController,
+            onRefresh: onRefresh,
+            child: ListView.builder(
+              itemCount: snapshot.data.length,
+              itemBuilder: (context, index) {
+                return Dismissible(
+                  key: Key(snapshot.data[index].id),
+                  background: Container(color: Colors.red),
+                  child: GroceryCard(grocery: snapshot.data[index]),
+                  onDismissed: (direction) {
+                    groceries.deleteGrocery(snapshot.data[index].id);
+                  },
+                );
               },
-            );
-          },
-        ),
+            ),
+          );
+        },
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {

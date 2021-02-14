@@ -2,12 +2,18 @@ import "package:http/http.dart";
 import "dart:convert";
 
 import "package:housekeeper/services/grocery.dart";
+import 'package:rxdart/rxdart.dart';
 
 class Groceries {
   String store;
-  List<Grocery> list = [];
+  BehaviorSubject listSubject = BehaviorSubject.seeded([]);
 
-  Groceries({this.store});
+  Groceries({this.store}) {
+    getList();
+  }
+
+  Stream get list$ => listSubject.stream;
+  List get list => listSubject.value;
 
   Future<void> getList() async {
     try {
@@ -18,7 +24,7 @@ class Groceries {
 
       if (response.statusCode == 404) throw json["message"];
 
-      list = [];
+      list.clear();
 
       for (var i = 0; i < json["data"].length; i++) {
         var grocery = json["data"][i];
@@ -30,6 +36,8 @@ class Groceries {
           quantity: grocery["quantity"],
         ));
       }
+
+      listSubject.add(list);
     } catch (err) {
       print("error $err");
     }
@@ -62,6 +70,8 @@ class Groceries {
         price: grocery["price"],
         quantity: grocery["quantity"],
       ));
+
+      listSubject.add(list);
     } catch (err) {
       print("error $err");
     }
@@ -79,8 +89,14 @@ class Groceries {
       var grocery = json["data"];
 
       list.removeWhere((g) => g.id == grocery["_id"]);
+
+      listSubject.add(list);
     } catch (err) {
       print("error $err");
     }
+  }
+
+  void dispose() {
+    listSubject.close();
   }
 }
