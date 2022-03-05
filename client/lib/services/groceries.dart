@@ -8,7 +8,7 @@ class Groceries {
   String store;
   BehaviorSubject listSubject = BehaviorSubject.seeded([]);
 
-  Groceries({this.store}) {
+  Groceries({required this.store}) {
     getList();
   }
 
@@ -17,10 +17,12 @@ class Groceries {
 
   Future<void> getList() async {
     try {
-      Response response =
-          await get("http://192.168.1.205:5000/api/groceries/$store");
+      Response response = await get(Uri(
+          host: "http://192.168.1.205:5000", path: "/api/groceries/$store"));
 
       Map json = jsonDecode(response.body);
+
+      print(json);
 
       if (response.statusCode == 404) throw json["message"];
 
@@ -46,7 +48,7 @@ class Groceries {
   Future<void> addGrocery(name, category, store, quantity, price) async {
     try {
       Response response = await post(
-        "http://192.168.1.205:5000/api/groceries",
+        Uri(host: "http://192.168.1.205:5000", path: "/api/groceries"),
         headers: <String, String>{
           "Content-Type": "application/json; charset=UTF-8",
         },
@@ -80,8 +82,8 @@ class Groceries {
 
   Future<void> deleteGrocery(id) async {
     try {
-      Response response =
-          await delete("http://192.168.1.205:5000/api/groceries/$id");
+      Response response = await delete(
+          Uri(host: "http://192.168.1.205:5000", path: "/api/groceries/$id"));
 
       Map json = jsonDecode(response.body);
 

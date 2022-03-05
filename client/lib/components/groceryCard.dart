@@ -5,7 +5,7 @@ import 'package:housekeeper/services/grocery.dart';
 class GroceryCard extends StatelessWidget {
   final Grocery grocery;
 
-  GroceryCard({this.grocery});
+  GroceryCard({required this.grocery});
 
   @override
   Widget build(BuildContext context) {

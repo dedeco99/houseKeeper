@@ -36,24 +36,23 @@ class _GroceryListState extends State<GroceryList> {
           if (!snapshot.hasData) return Text("Loading");
 
           return SmartRefresher(
-            enablePullDown: true,
-            header: WaterDropMaterialHeader(),
-            controller: refreshController,
-            onRefresh: onRefresh,
-            child: ListView.builder(
-              itemCount: snapshot.data.length,
-              itemBuilder: (context, index) {
-                return Dismissible(
-                  key: Key(snapshot.data[index].id),
-                  background: Container(color: Colors.red),
-                  child: GroceryCard(grocery: snapshot.data[index]),
-                  onDismissed: (direction) {
-                    groceries.deleteGrocery(snapshot.data[index].id);
-                  },
-                );
-              },
-            ),
-          );
+              enablePullDown: true,
+              header: WaterDropMaterialHeader(),
+              controller: refreshController,
+              onRefresh: onRefresh,
+              child: ListView.builder(
+                itemCount: snapshot.data.length,
+                itemBuilder: (context, index) {
+                  return Dismissible(
+                    key: Key(snapshot.data[index].id),
+                    background: Container(color: Colors.red),
+                    child: GroceryCard(grocery: snapshot.data[index]),
+                    onDismissed: (direction) {
+                      groceries.deleteGrocery(snapshot.data[index].id);
+                    },
+                  );
+                },
+              ));
         },
       ),
       floatingActionButton: AddGroceryFloatingActionButton(),
