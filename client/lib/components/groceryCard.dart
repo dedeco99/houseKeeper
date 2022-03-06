@@ -1,19 +1,19 @@
-import 'package:flutter/material.dart';
+import "package:flutter/material.dart";
 
-import 'package:housekeeper/services/grocery.dart';
+import "package:housekeeper/services/grocery.dart";
 
 class GroceryCard extends StatelessWidget {
-  final Grocery grocery;
+  const GroceryCard({Key? key, required this.grocery}) : super(key: key);
 
-  GroceryCard({required this.grocery});
+  final Grocery grocery;
 
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: EdgeInsets.fromLTRB(0, 5, 0, 5),
+      margin: const EdgeInsets.fromLTRB(0, 5, 0, 5),
       color: Colors.grey[800],
       child: Padding(
-        padding: EdgeInsets.all(8.0),
+        padding: const EdgeInsets.all(8.0),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -21,7 +21,7 @@ class GroceryCard extends StatelessWidget {
             Column(
               children: [
                 Text(
-                  "${grocery.name}",
+                  grocery.name,
                   style: TextStyle(
                     fontSize: 28,
                     letterSpacing: 2,

@@ -1,13 +1,15 @@
-import 'package:flutter/material.dart';
-import 'package:get_it/get_it.dart';
-import 'package:pull_to_refresh/pull_to_refresh.dart';
+import "package:flutter/material.dart";
+import "package:get_it/get_it.dart";
+import "package:pull_to_refresh/pull_to_refresh.dart";
 
-import 'package:housekeeper/components/groceryCard.dart';
-import 'package:housekeeper/components/groceryDetail.dart';
+import "package:housekeeper/components/groceryCard.dart";
+import "package:housekeeper/components/groceryDetail.dart";
 
 import "package:housekeeper/services/groceries.dart";
 
 class GroceryList extends StatefulWidget {
+  const GroceryList({Key? key}) : super(key: key);
+
   @override
   _GroceryListState createState() => _GroceryListState();
 }
@@ -27,17 +29,17 @@ class _GroceryListState extends State<GroceryList> {
     return Scaffold(
       backgroundColor: Colors.grey[900],
       appBar: AppBar(
-        title: Text("House Keeper"),
+        title: const Text("House Keeper"),
         elevation: 0,
       ),
       body: StreamBuilder(
         stream: groceries.list$,
         builder: (BuildContext context, AsyncSnapshot snapshot) {
-          if (!snapshot.hasData) return Text("Loading");
+          if (!snapshot.hasData) return const Text("Loading");
 
           return SmartRefresher(
               enablePullDown: true,
-              header: WaterDropMaterialHeader(),
+              header: const WaterDropMaterialHeader(),
               controller: refreshController,
               onRefresh: onRefresh,
               child: ListView.builder(
@@ -55,12 +57,14 @@ class _GroceryListState extends State<GroceryList> {
               ));
         },
       ),
-      floatingActionButton: AddGroceryFloatingActionButton(),
+      floatingActionButton: const AddGroceryFloatingActionButton(),
     );
   }
 }
 
 class AddGroceryFloatingActionButton extends StatelessWidget {
+  const AddGroceryFloatingActionButton({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return FloatingActionButton(
@@ -69,12 +73,12 @@ class AddGroceryFloatingActionButton extends StatelessWidget {
           context: context,
           builder: (context) => Container(
             color: Colors.grey[900],
-            height: 500,
-            child: GroceryDetail(),
+            height: 550,
+            child: Wrap(children: const [GroceryDetail()]),
           ),
         );
       },
-      child: Icon(Icons.add),
+      child: const Icon(Icons.add),
       backgroundColor: Colors.blue,
     );
   }

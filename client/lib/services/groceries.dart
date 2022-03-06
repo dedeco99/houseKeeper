@@ -17,8 +17,14 @@ class Groceries {
 
   Future<void> getList() async {
     try {
-      Response response = await get(Uri(
-          host: "http://192.168.1.205:5000", path: "/api/groceries/$store"));
+      Response response = await get(
+        Uri(
+          scheme: "http",
+          host: "192.168.1.205",
+          port: 5000,
+          path: "/api/groceries/$store",
+        ),
+      );
 
       Map json = jsonDecode(response.body);
 
@@ -31,12 +37,14 @@ class Groceries {
       for (var i = 0; i < json["data"].length; i++) {
         var grocery = json["data"][i];
 
-        list.add(new Grocery(
-          id: grocery["_id"],
-          name: grocery["name"],
-          price: grocery["price"],
-          quantity: grocery["quantity"],
-        ));
+        list.add(
+          Grocery(
+            id: grocery["_id"],
+            name: grocery["name"],
+            price: grocery["price"],
+            quantity: grocery["quantity"],
+          ),
+        );
       }
 
       listSubject.add(list);
@@ -48,7 +56,12 @@ class Groceries {
   Future<void> addGrocery(name, category, store, quantity, price) async {
     try {
       Response response = await post(
-        Uri(host: "http://192.168.1.205:5000", path: "/api/groceries"),
+        Uri(
+          scheme: "http",
+          host: "192.168.1.205",
+          port: 5000,
+          path: "/api/groceries",
+        ),
         headers: <String, String>{
           "Content-Type": "application/json; charset=UTF-8",
         },
@@ -67,12 +80,14 @@ class Groceries {
 
       var grocery = json["data"];
 
-      list.add(new Grocery(
-        id: grocery["_id"],
-        name: grocery["name"],
-        price: grocery["price"],
-        quantity: grocery["quantity"],
-      ));
+      list.add(
+        Grocery(
+          id: grocery["_id"],
+          name: grocery["name"],
+          price: grocery["price"],
+          quantity: grocery["quantity"],
+        ),
+      );
 
       listSubject.add(list);
     } catch (err) {
@@ -83,7 +98,13 @@ class Groceries {
   Future<void> deleteGrocery(id) async {
     try {
       Response response = await delete(
-          Uri(host: "http://192.168.1.205:5000", path: "/api/groceries/$id"));
+        Uri(
+          scheme: "http",
+          host: "192.168.1.205",
+          port: 5000,
+          path: "/api/groceries/$id",
+        ),
+      );
 
       Map json = jsonDecode(response.body);
 
