@@ -4,7 +4,20 @@
 	"description": "",
 	"main": "app.js",
 	"scripts": {
-		"test": "echo \"Error: no test specified\" && exit 1"
+		"start": "npm run server",
+		"server": "node app.js",
+		"lint": "eslint '**/*.js' --ignore-pattern node_modules/ --ignore-pattern build/",
+		"client-build": "cd ../client && npm run build",
+		"server-dev": "node --watch --watch-preserve-output --env-file=.env app.js",
+		"gen-splash": "cd ../client && flutter pub run flutter_native_splash:create",
+		"gen-icons": "cd ../client && flutter pub run flutter_launcher_icons:main",
+		"build": "cd ../client && flutter clean && flutter build web --no-tree-shake-icons && rm -rf ../server/build && mv build ../server",
+		"build-app": "cd ../client && flutter clean && flutter build appbundle --no-tree-shake-icons",
+		"build-ios-open": "cd ../client && open ios/Runner.xcworkspace",
+		"build-ios-app": "cd ../client && flutter build ipa --no-tree-shake-icons",
+		"build-ios-upload": "cd ../client && open build/ios/archive/Runner.xcarchive",
+		"client-dev": "cd ../client && flutter run --web-port 3005",
+		"client-dev-web": "cd ../client && flutter -d chrome run --web-port 3005"
 	},
 	"author": "Andre Coelho",
 	"license": "ISC",
