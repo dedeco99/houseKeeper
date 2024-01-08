@@ -1,7 +1,5 @@
 const express = require("express");
 
-if (!process.env.ENV || process.env.ENV === "dev") require("./utils/secrets"); // eslint-disable-line
-
 const database = require("./utils/database");
 const { middleware } = require("./utils/middleware");
 
