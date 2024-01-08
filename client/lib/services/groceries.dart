@@ -14,13 +14,14 @@ class Groceries {
 
   Stream get list$ => listSubject.stream;
   List get list => listSubject.value;
+  String host = "192.168.1.69";
 
   Future<void> getList() async {
     try {
       Response response = await get(
         Uri(
           scheme: "http",
-          host: "192.168.1.205",
+          host: host,
           port: 5000,
           path: "/api/groceries/$store",
         ),
@@ -58,7 +59,7 @@ class Groceries {
       Response response = await post(
         Uri(
           scheme: "http",
-          host: "192.168.1.205",
+          host: host,
           port: 5000,
           path: "/api/groceries",
         ),
@@ -100,7 +101,7 @@ class Groceries {
       Response response = await delete(
         Uri(
           scheme: "http",
-          host: "192.168.1.205",
+          host: host,
           port: 5000,
           path: "/api/groceries/$id",
         ),
