@@ -44,7 +44,7 @@ class _GroceryListState extends State<GroceryListView> {
                   style: const TextStyle(color: Colors.deepPurple),
                   underline: Container(height: 2, color: Colors.deepPurpleAccent),
                   onChanged: (GroceryList? value) {
-                    if (value != null) groceries.getList(value.name);
+                    if (value != null) groceries.getList(value.id);
                   },
                   items: lists.map((GroceryList value) {
                     return DropdownMenuItem(value: value, child: Text(value.name));

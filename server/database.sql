@@ -30,7 +30,7 @@ CREATE TABLE grocery_list_grocery(
   grocery_list uuid REFERENCES grocery_list(id) NOT NULL,
   grocery uuid REFERENCES grocery(id) NOT NULL,
   quantity smallint NOT NULL DEFAULT 1,
-  price money NOT NULL DEFAULT 0,
+  price numeric NOT NULL DEFAULT 0,
   created timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 

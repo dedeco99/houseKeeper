@@ -10,6 +10,31 @@ async function getGroceryLists() {
 	return response(200, "GET_GROCERY_LISTS", groceryLists.rows);
 }
 
+async function getGroceryList(event) {
+	const { params } = event;
+	const { id } = params;
+
+	let groceries = null;
+	try {
+		const result = await database.query(
+			`
+			SELECT * FROM grocery_list_grocery
+			LEFT JOIN grocery ON grocery_list_grocery.grocery=grocery.id
+			WHERE grocery_list = $1
+			`,
+			[id],
+		);
+
+		groceries = result.rows;
+	} catch (err) {
+		console.log(err);
+
+		return errors.badRequest;
+	}
+
+	return response(200, "GET_GROCERY_LIST", groceries);
+}
+
 async function getGroceries() {
 	const groceries = await database.query("SELECT * FROM grocery WHERE active = true ORDER BY created DESC");
 
@@ -81,4 +106,4 @@ async function deleteGrocery(event) {
 	return response(200, "DELETE_GROCERY", grocery);
 }
 
-module.exports = { getGroceryLists, getGroceries, addGrocery, deleteGrocery };
+module.exports = { getGroceryLists, getGroceryList, getGroceries, addGrocery, deleteGrocery };

@@ -26,13 +26,11 @@ class Groceries {
           scheme: "http",
           host: host,
           port: 5000,
-          path: "/api/groceryLists",
+          path: "/api/groceries/lists",
         ),
       );
 
       Map json = jsonDecode(response.body);
-
-      print(json);
 
       if (response.statusCode == 404) throw json["message"];
 
@@ -45,6 +43,8 @@ class Groceries {
       }
 
       listsSubject.add(lists);
+
+      if (lists.isNotEmpty) getList(lists.first.id);
     } catch (err) {
       print("error $err");
     }
@@ -57,13 +57,11 @@ class Groceries {
           scheme: "http",
           host: host,
           port: 5000,
-          path: "/api/groceries/$groceryList",
+          path: "/api/groceries/lists/$groceryList",
         ),
       );
 
       Map json = jsonDecode(response.body);
-
-      print(json);
 
       if (response.statusCode == 404) throw json["message"];
 
@@ -76,8 +74,8 @@ class Groceries {
           Grocery(
             id: grocery["id"],
             name: grocery["name"],
-            price: int.parse(grocery["default_price"]),
-            quantity: grocery["default_quantity"],
+            price: int.parse(grocery["price"]),
+            quantity: grocery["quantity"],
           ),
         );
       }
