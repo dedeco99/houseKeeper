@@ -1,27 +1,5 @@
-const mongoose = require("mongoose");
+const Pool = require("pg").Pool;
 
-function connect(connectionString) {
-	return new Promise(resolve => {
-		mongoose.set("useFindAndModify", false);
-		mongoose.connect(connectionString, {
-			useNewUrlParser: true,
-			useUnifiedTopology: true,
-			useCreateIndex: true,
-		});
+const pool = new Pool({ user: "dedeco99", database: "housekeeper" });
 
-		mongoose.connection.once("open", () => {
-			console.log("Connected to database");
-			resolve();
-		});
-	});
-}
-
-function disconnect() {
-	return new Promise(resolve => {
-		mongoose.connection.close();
-
-		mongoose.connection.once("close", () => resolve());
-	});
-}
-
-module.exports = { connect, disconnect };
+module.exports = pool;
