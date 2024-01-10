@@ -1,4 +1,18 @@
-import 'package:flutter/foundation.dart';
+import "package:flutter/foundation.dart";
+
+@immutable
+class GroceryList {
+  final String id;
+  final String name;
+
+  const GroceryList({required this.id, required this.name});
+
+  @override
+  bool operator ==(covariant Grocery other) => id == other.id;
+
+  @override
+  int get hashCode => id.hashCode;
+}
 
 @immutable
 class Grocery {

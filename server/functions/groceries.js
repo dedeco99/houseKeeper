@@ -2,6 +2,14 @@ const database = require("../utils/database");
 const { response } = require("../utils/request");
 const errors = require("../utils/errors");
 
+async function getGroceryLists() {
+	const groceryLists = await database.query(
+		"SELECT * FROM grocery_list WHERE active = true ORDER BY created DESC",
+	);
+
+	return response(200, "GET_GROCERY_LISTS", groceryLists.rows);
+}
+
 async function getGroceries() {
 	const groceries = await database.query("SELECT * FROM grocery WHERE active = true ORDER BY created DESC");
 
@@ -73,8 +81,4 @@ async function deleteGrocery(event) {
 	return response(200, "DELETE_GROCERY", grocery);
 }
 
-module.exports = {
-	getGroceries,
-	addGrocery,
-	deleteGrocery,
-};
+module.exports = { getGroceryLists, getGroceries, addGrocery, deleteGrocery };

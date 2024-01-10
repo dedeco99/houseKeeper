@@ -6,21 +6,22 @@ import "package:housekeeper/components/groceryCard.dart";
 import "package:housekeeper/components/groceryDetail.dart";
 
 import "package:housekeeper/services/groceries.dart";
+import "package:housekeeper/services/grocery.dart";
 
-class GroceryList extends StatefulWidget {
-  const GroceryList({Key? key}) : super(key: key);
+class GroceryListView extends StatefulWidget {
+  const GroceryListView({Key? key}) : super(key: key);
 
   @override
   _GroceryListState createState() => _GroceryListState();
 }
 
-class _GroceryListState extends State<GroceryList> {
+class _GroceryListState extends State<GroceryListView> {
   Groceries groceries = GetIt.instance.get<Groceries>();
   RefreshController refreshController = RefreshController();
 
-  void onRefresh() async {
-    await groceries.getList();
+  GroceryList? groceryList;
 
+  void onRefresh() async {
     refreshController.refreshCompleted();
   }
 
@@ -29,7 +30,31 @@ class _GroceryListState extends State<GroceryList> {
     return Scaffold(
       backgroundColor: Colors.grey[900],
       appBar: AppBar(
-        title: const Text("House Keeper"),
+        title: StreamBuilder(
+          stream: groceries.lists$,
+          builder: (BuildContext context, AsyncSnapshot snapshot) {
+            switch (snapshot.connectionState) {
+              case ConnectionState.active:
+                final lists = snapshot.data as List<GroceryList>;
+
+                return DropdownButton(
+                  value: groceryList,
+                  icon: const Icon(Icons.arrow_downward),
+                  elevation: 16,
+                  style: const TextStyle(color: Colors.deepPurple),
+                  underline: Container(height: 2, color: Colors.deepPurpleAccent),
+                  onChanged: (GroceryList? value) {
+                    if (value != null) groceries.getList(value.name);
+                  },
+                  items: lists.map((GroceryList value) {
+                    return DropdownMenuItem(value: value, child: Text(value.name));
+                  }).toList(),
+                );
+              default:
+                return const Text("Loading");
+            }
+          },
+        ),
         elevation: 0,
       ),
       body: StreamBuilder(

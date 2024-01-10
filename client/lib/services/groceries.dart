@@ -2,28 +2,62 @@ import "package:http/http.dart";
 import "dart:convert";
 
 import "package:housekeeper/services/grocery.dart";
-import 'package:rxdart/rxdart.dart';
+import "package:rxdart/rxdart.dart";
 
 class Groceries {
-  String store;
+  String? groceryList;
+  BehaviorSubject<List<GroceryList>> listsSubject = BehaviorSubject.seeded([]);
   BehaviorSubject listSubject = BehaviorSubject.seeded([]);
 
-  Groceries({required this.store}) {
-    getList();
+  Groceries() {
+    getLists();
   }
 
+  Stream<List<GroceryList>> get lists$ => listsSubject.stream;
+  List<GroceryList> get lists => listsSubject.value;
   Stream get list$ => listSubject.stream;
   List get list => listSubject.value;
   String host = "192.168.1.69";
 
-  Future<void> getList() async {
+  Future<void> getLists() async {
     try {
       Response response = await get(
         Uri(
           scheme: "http",
           host: host,
           port: 5000,
-          path: "/api/groceries",
+          path: "/api/groceryLists",
+        ),
+      );
+
+      Map json = jsonDecode(response.body);
+
+      print(json);
+
+      if (response.statusCode == 404) throw json["message"];
+
+      lists.clear();
+
+      for (var i = 0; i < json["data"].length; i++) {
+        var groceryList = json["data"][i];
+
+        lists.add(GroceryList(id: groceryList["id"], name: groceryList["name"]));
+      }
+
+      listsSubject.add(lists);
+    } catch (err) {
+      print("error $err");
+    }
+  }
+
+  Future<void> getList(String groceryList) async {
+    try {
+      Response response = await get(
+        Uri(
+          scheme: "http",
+          host: host,
+          port: 5000,
+          path: "/api/groceries/$groceryList",
         ),
       );
 

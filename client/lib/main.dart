@@ -6,7 +6,7 @@ import "package:housekeeper/pages/groceryList.dart";
 import "package:housekeeper/services/groceries.dart";
 
 void main() {
-  GetIt.instance.registerSingleton<Groceries>(Groceries(store: "Lidl"));
+  GetIt.instance.registerSingleton<Groceries>(Groceries());
 
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -16,7 +16,7 @@ void main() {
     home: const Home(),
     routes: {
       "/home": (context) => const Home(),
-      "/groceryList": (context) => const GroceryList(),
+      "/groceryList": (context) => const GroceryListView(),
     },
   ));
 }
