@@ -23,7 +23,7 @@ class Groceries {
           scheme: "http",
           host: host,
           port: 5000,
-          path: "/api/groceries/$store",
+          path: "/api/groceries",
         ),
       );
 
@@ -40,10 +40,10 @@ class Groceries {
 
         list.add(
           Grocery(
-            id: grocery["_id"],
+            id: grocery["id"],
             name: grocery["name"],
-            price: grocery["price"],
-            quantity: grocery["quantity"],
+            price: int.parse(grocery["default_price"]),
+            quantity: grocery["default_quantity"],
           ),
         );
       }
@@ -83,10 +83,10 @@ class Groceries {
 
       list.add(
         Grocery(
-          id: grocery["_id"],
+          id: grocery["id"],
           name: grocery["name"],
-          price: grocery["price"],
-          quantity: grocery["quantity"],
+          price: int.parse(grocery["default_price"]),
+          quantity: grocery["default_quantity"],
         ),
       );
 

@@ -1,36 +1,45 @@
+const database = require("../utils/database");
 const { response } = require("../utils/request");
 const errors = require("../utils/errors");
 
-const Grocery = require("../models/grocery");
+async function getGroceries() {
+	const groceries = await database.query("SELECT * FROM grocery");
 
-async function getGroceries(event) {
-	const { params } = event;
-	const { store } = params;
-
-	const groceries = await Grocery.find({ active: true, store }).lean();
-
-	return response(200, "GET_GROCERIES", groceries);
+	return response(200, "GET_GROCERIES", groceries.rows);
 }
 
 async function addGrocery(event) {
 	const { body } = event;
-	const { name, category, store, quantity, price } = body;
+	const { name, category, quantity, price } = body;
 
-	if (!name || !category || !store || !quantity) {
-		return errors.requiredFieldsMissing;
+	if (!name) return errors.requiredFieldsMissing;
+
+	const fields = { name, category, default_price: price, default_quantity: quantity };
+
+	const keys = [];
+	const values = [];
+	for (const field in fields) {
+		if (fields[field]) {
+			keys.push(field);
+			values.push(fields[field]);
+		}
 	}
 
-	const grocery = new Grocery({
-		name,
-		category,
-		store,
-		quantity,
-		price,
-	});
+	try {
+		await database.query(
+			`
+			INSERT INTO grocery (${keys.join(",")})
+			VALUES (${keys.map((_k, i) => `$${i + 1}`)})
+			`,
+			values,
+		);
+	} catch (err) {
+		console.log(err);
 
-	await grocery.save();
+		return errors.badRequest;
+	}
 
-	return response(201, "ADD_GROCERY", grocery);
+	return response(201, "ADD_GROCERY");
 }
 
 async function deleteGrocery(event) {
