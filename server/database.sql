@@ -2,7 +2,7 @@ CREATE DATABASE housekeeper;
 
 -- Groceries
 CREATE TABLE category(
-  id uuid PRIMARY KEY NOT NULL,
+  id uuid PRIMARY KEY NOT NULL DEFAULT public.uuid_generate_v4(),
   active boolean NOT NULL DEFAULT TRUE,
   name text NOT NULL,
   created timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
@@ -19,14 +19,14 @@ CREATE TABLE grocery(
 );
 
 CREATE TABLE grocery_list(
-  id uuid PRIMARY KEY NOT NULL,
+  id uuid PRIMARY KEY NOT NULL DEFAULT public.uuid_generate_v4(),
   active boolean NOT NULL DEFAULT TRUE,
   name text NOT NULL,
   created timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE grocery_list_grocery(
-  id uuid PRIMARY KEY NOT NULL,
+  id uuid PRIMARY KEY NOT NULL DEFAULT public.uuid_generate_v4(),
   grocery_list uuid REFERENCES grocery_list(id) NOT NULL,
   grocery uuid REFERENCES grocery(id) NOT NULL,
   quantity smallint NOT NULL DEFAULT 1,
@@ -36,7 +36,7 @@ CREATE TABLE grocery_list_grocery(
 
 -- Users
 CREATE TABLE profile(
-  id uuid PRIMARY KEY NOT NULL,
+  id uuid PRIMARY KEY NOT NULL DEFAULT public.uuid_generate_v4(),
   active boolean NOT NULL DEFAULT TRUE,
   name text NOT NULL,
   email text NOT NULL,
@@ -46,7 +46,7 @@ CREATE TABLE profile(
 );
 
 CREATE TABLE household(
-  id uuid PRIMARY KEY NOT NULL,
+  id uuid PRIMARY KEY NOT NULL DEFAULT public.uuid_generate_v4(),
   active boolean NOT NULL DEFAULT TRUE,
   name text NOT NULL,
   created timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
