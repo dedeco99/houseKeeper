@@ -14,7 +14,15 @@ async function addGrocery(event) {
 
 	if (!name) return errors.requiredFieldsMissing;
 
-	const fields = { name, category, default_price: price, default_quantity: quantity };
+	const fields = {
+		id: null,
+		active: null,
+		name,
+		category,
+		default_price: price,
+		default_quantity: quantity,
+		created: null,
+	};
 
 	const keys = [];
 	const values = [];
@@ -25,21 +33,24 @@ async function addGrocery(event) {
 		}
 	}
 
+	let grocery = null;
 	try {
-		await database.query(
+		const result = await database.query(
 			`
-			INSERT INTO grocery (${keys.join(",")})
-			VALUES (${keys.map((_k, i) => `$${i + 1}`)})
+			INSERT INTO grocery (${keys.join(",")}) VALUES (${keys.map((_k, i) => `$${i + 1}`)})
+			RETURNING ${Object.keys(fields).join(",")};
 			`,
 			values,
 		);
+
+		grocery = result.rows[0];
 	} catch (err) {
 		console.log(err);
 
 		return errors.badRequest;
 	}
 
-	return response(201, "ADD_GROCERY");
+	return response(201, "ADD_GROCERY", grocery);
 }
 
 async function deleteGrocery(event) {
