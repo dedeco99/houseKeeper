@@ -1,20 +1,20 @@
 CREATE DATABASE housekeeper;
 
 -- Groceries
-CREATE TABLE grocery(
-  id uuid PRIMARY KEY NOT NULL,
-  active boolean NOT NULL DEFAULT TRUE,
-  name text NOT NULL,
-  category uuid REFERENCES category(id),
-  default_quantity smallint NOT NULL DEFAULT 1,
-  default_price money NOT NULL DEFAULT 0,
-  created timestamp
-);
-
 CREATE TABLE category(
   id uuid PRIMARY KEY NOT NULL,
   active boolean NOT NULL DEFAULT TRUE,
   name text NOT NULL,
+  created timestamp
+);
+
+CREATE TABLE grocery(
+  id uuid PRIMARY KEY NOT NULL DEFAULT public.uuid_generate_v4(),
+  active boolean NOT NULL DEFAULT TRUE,
+  name text NOT NULL,
+  category uuid REFERENCES category(id),
+  default_quantity smallint NOT NULL DEFAULT 1,
+  default_price numeric NOT NULL DEFAULT 0,
   created timestamp
 );
 
