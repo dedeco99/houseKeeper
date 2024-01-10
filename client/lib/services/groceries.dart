@@ -81,7 +81,8 @@ class Groceries {
 
       var grocery = json["data"];
 
-      list.add(
+      list.insert(
+        0,
         Grocery(
           id: grocery["id"],
           name: grocery["name"],
@@ -113,7 +114,7 @@ class Groceries {
 
       var grocery = json["data"];
 
-      list.removeWhere((g) => g.id == grocery["_id"]);
+      list.removeWhere((g) => g.id == grocery["id"]);
 
       listSubject.add(list);
     } catch (err) {

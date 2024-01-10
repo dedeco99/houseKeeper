@@ -3,7 +3,7 @@ const { response } = require("../utils/request");
 const errors = require("../utils/errors");
 
 async function getGroceries() {
-	const groceries = await database.query("SELECT * FROM grocery");
+	const groceries = await database.query("SELECT * FROM grocery WHERE active = true ORDER BY created DESC");
 
 	return response(200, "GET_GROCERIES", groceries.rows);
 }
@@ -59,13 +59,15 @@ async function deleteGrocery(event) {
 
 	let grocery = null;
 	try {
-		grocery = await Grocery.findOne({ _id: id }, "active");
+		const result = await database.query("UPDATE grocery SET active = NOT active WHERE id = $1 RETURNING id", [id]);
 
-		if (!grocery) return errors.notFound;
+		if (result.rowCount === 0) return errors.notFound;
 
-		grocery = await Grocery.findOneAndUpdate({ _id: id }, { active: !grocery.active }, { new: true });
-	} catch (e) {
-		return errors.notFound;
+		grocery = result.rows[0];
+	} catch (err) {
+		console.log(err);
+
+		return errors.badRequest;
 	}
 
 	return response(200, "DELETE_GROCERY", grocery);
