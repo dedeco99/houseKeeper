@@ -5,8 +5,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/dedeco99/housekeeper/util"
 	"github.com/stretchr/testify/require"
+
+	"github.com/dedeco99/housekeeper/util"
 )
 
 func createRandomAccount(t *testing.T) Account {

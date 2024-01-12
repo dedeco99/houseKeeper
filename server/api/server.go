@@ -1,9 +1,9 @@
 package api
 
 import (
-	db "github.com/dedeco99/housekeeper/db/sqlc"
-
 	"github.com/gin-gonic/gin"
+
+	db "github.com/dedeco99/housekeeper/db/sqlc"
 )
 
 type Server struct {
@@ -15,6 +15,7 @@ func NewServer(store *db.Store) *Server {
 	server := &Server{store: store}
 	router := gin.Default()
 
+	router.GET("/accounts/:id", server.getAccount)
 	router.POST("/accounts", server.createAccount)
 
 	server.router = router

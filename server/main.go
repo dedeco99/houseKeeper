@@ -4,10 +4,10 @@ import (
 	"database/sql"
 	"log"
 
+	_ "github.com/lib/pq"
+
 	"github.com/dedeco99/housekeeper/api"
 	db "github.com/dedeco99/housekeeper/db/sqlc"
-
-	_ "github.com/lib/pq"
 )
 
 const (
