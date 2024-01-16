@@ -1,11 +1,14 @@
 -- name: GetGroceryListGroceries :many
 SELECT
-  *
+  grocery_list_grocery.*,
+  grocery.name,
+  grocery.category
 FROM
   grocery_list_grocery
   LEFT JOIN grocery ON grocery_list_grocery.grocery = grocery.id
 WHERE
-  grocery_list = $1;
+  grocery_list_grocery.active = TRUE
+  AND grocery_list = $1;
 
 -- name: CreateGroceryListGrocery :one
 INSERT INTO grocery_list_grocery(grocery_list, grocery, quantity, price)

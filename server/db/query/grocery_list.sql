@@ -6,8 +6,7 @@ FROM
 WHERE
   active = TRUE
 ORDER BY
-  created DESC
-LIMIT $1 OFFSET $2;
+  created DESC;
 
 -- name: CreateGroceryList :one
 INSERT INTO grocery_list(name)
