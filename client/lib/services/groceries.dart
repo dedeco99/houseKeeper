@@ -25,7 +25,7 @@ class Groceries {
         Uri(
           scheme: "http",
           host: host,
-          port: 5000,
+          port: 5001,
           path: "/api/groceries/lists",
         ),
       );
@@ -56,7 +56,7 @@ class Groceries {
         Uri(
           scheme: "http",
           host: host,
-          port: 5000,
+          port: 5001,
           path: "/api/groceries/lists/$groceryList",
         ),
       );
@@ -73,7 +73,7 @@ class Groceries {
         list.add(
           Grocery(
             id: grocery["id"],
-            name: grocery["name"],
+            name: grocery["name"]["String"],
             price: int.parse(grocery["price"]),
             quantity: grocery["quantity"],
           ),
@@ -92,7 +92,7 @@ class Groceries {
         Uri(
           scheme: "http",
           host: host,
-          port: 5000,
+          port: 5001,
           path: "/api/groceries",
         ),
         headers: <String, String>{
@@ -135,7 +135,7 @@ class Groceries {
         Uri(
           scheme: "http",
           host: host,
-          port: 5000,
+          port: 5001,
           path: "/api/groceries/$id",
         ),
       );
