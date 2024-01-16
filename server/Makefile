@@ -4,7 +4,10 @@ sqlc:
 test:
 	go test -v -cover ./...
 
-server:
+server-dev:
 	go run main.go
 
-.PHONY: sqlc
+client-dev:
+	cd ../client && flutter run --web-port 3005
+
+.PHONY: sqlc test server-dev client-dev
