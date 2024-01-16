@@ -9,15 +9,6 @@ ORDER BY
   created DESC
 LIMIT $1 OFFSET $2;
 
--- name: GetGroceryList :one
-SELECT
-  *
-FROM
-  grocery_list_grocery
-  LEFT JOIN grocery ON grocery_list_grocery.grocery = grocery.id
-WHERE
-  grocery_list = $1;
-
 -- name: CreateGroceryList :one
 INSERT INTO grocery_list(name)
   VALUES ($1)
