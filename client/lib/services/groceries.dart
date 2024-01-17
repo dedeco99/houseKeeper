@@ -26,7 +26,7 @@ class Groceries {
           scheme: "http",
           host: host,
           port: 5001,
-          path: "/api/groceries/lists",
+          path: "/api/grocery_lists",
         ),
       );
 
@@ -57,7 +57,7 @@ class Groceries {
           scheme: "http",
           host: host,
           port: 5001,
-          path: "/api/groceries/lists/$groceryList",
+          path: "/api/grocery_lists/$groceryList",
         ),
       );
 
@@ -95,7 +95,7 @@ class Groceries {
           scheme: "http",
           host: host,
           port: 5001,
-          path: "/api/groceries/lists",
+          path: "/api/grocery_lists",
         ),
         headers: <String, String>{
           "Content-Type": "application/json; charset=UTF-8",
@@ -167,7 +167,7 @@ class Groceries {
           scheme: "http",
           host: host,
           port: 5001,
-          path: "/api/groceries/$id",
+          path: "/api/grocery_lists/groceries/$id",
         ),
       );
 
