@@ -7,14 +7,14 @@ import (
 )
 
 func (server *Server) getGroceryLists(ctx *gin.Context) {
-	groceryList, err := server.store.GetGroceryLists(ctx)
+	groceryLists, err := server.store.GetGroceryLists(ctx)
 
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
 
-	ctx.JSON(http.StatusOK, response("GET_GROCERY_LIST", groceryList))
+	ctx.JSON(http.StatusOK, response("GET_GROCERY_LISTS", groceryLists))
 }
 
 type createGroceryListRequest struct {

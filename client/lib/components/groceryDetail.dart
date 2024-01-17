@@ -128,6 +128,7 @@ class _GroceryDetailState extends State<GroceryDetail> {
               padding: const EdgeInsets.all(8),
               child: ElevatedButton(
                 onPressed: () async {
+                  /*
                   await groceries.addGrocery(
                     _name.text,
                     _category.text,
@@ -135,7 +136,7 @@ class _GroceryDetailState extends State<GroceryDetail> {
                     _quantity.text,
                     _price.text,
                   );
-
+                  */
                   Navigator.of(context).pop();
                 },
                 child: const Text("Submit"),

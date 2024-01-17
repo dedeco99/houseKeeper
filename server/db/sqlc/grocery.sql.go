@@ -80,16 +80,10 @@ WHERE
   active = TRUE
 ORDER BY
   name DESC
-LIMIT $1 OFFSET $2
 `
 
-type GetGroceriesParams struct {
-	Limit  int32 `json:"limit"`
-	Offset int32 `json:"offset"`
-}
-
-func (q *Queries) GetGroceries(ctx context.Context, arg GetGroceriesParams) ([]Grocery, error) {
-	rows, err := q.db.QueryContext(ctx, getGroceries, arg.Limit, arg.Offset)
+func (q *Queries) GetGroceries(ctx context.Context) ([]Grocery, error) {
+	rows, err := q.db.QueryContext(ctx, getGroceries)
 	if err != nil {
 		return nil, err
 	}

@@ -6,18 +6,52 @@ import "package:rxdart/rxdart.dart";
 
 class Groceries {
   String? groceryList;
+
+  BehaviorSubject<List<Grocery>> groceriesSubject = BehaviorSubject.seeded([]);
   BehaviorSubject<List<GroceryList>> listsSubject = BehaviorSubject.seeded([]);
   BehaviorSubject listSubject = BehaviorSubject.seeded([]);
 
   Groceries() {
     getLists();
+    getGroceries();
   }
 
+  Stream<List<Grocery>> get groceries$ => groceriesSubject.stream;
+  List<Grocery> get groceries => groceriesSubject.value;
   Stream<List<GroceryList>> get lists$ => listsSubject.stream;
   List<GroceryList> get lists => listsSubject.value;
   Stream get list$ => listSubject.stream;
   List get list => listSubject.value;
   String host = "192.168.1.69";
+
+  Future<void> getGroceries() async {
+    try {
+      Response response = await get(
+        Uri(
+          scheme: "http",
+          host: host,
+          port: 5001,
+          path: "/api/groceries",
+        ),
+      );
+
+      Map json = jsonDecode(response.body);
+
+      if (response.statusCode == 404) throw json["message"];
+
+      groceries.clear();
+
+      for (var i = 0; i < json["data"].length; i++) {
+        var grocery = json["data"][i];
+
+        groceries.add(Grocery(id: grocery["id"], name: grocery["name"]));
+      }
+
+      groceriesSubject.add(groceries);
+    } catch (err) {
+      print("error $err");
+    }
+  }
 
   Future<void> getLists() async {
     try {
@@ -117,40 +151,34 @@ class Groceries {
     }
   }
 
-  Future<void> addGrocery(name, category, store, quantity, price) async {
+  Future<void> addGroceryListGrocery(grocery, quantity, price) async {
     try {
       Response response = await post(
         Uri(
           scheme: "http",
           host: host,
           port: 5001,
-          path: "/api/groceries",
+          path: "/api/grocery_lists/:id/groceries",
         ),
         headers: <String, String>{
           "Content-Type": "application/json; charset=UTF-8",
         },
-        body: jsonEncode({
-          "name": name,
-          "category": category,
-          "store": store,
-          "quantity": quantity,
-          "price": price,
-        }),
+        body: jsonEncode({"grocery": grocery, "quantity": quantity, "price": price}),
       );
 
       Map json = jsonDecode(response.body);
 
       if (response.statusCode == 404) throw json["message"];
 
-      var grocery = json["data"];
+      var groceryListGrocery = json["data"];
 
       list.insert(
         0,
         Grocery(
-          id: grocery["id"],
-          name: grocery["name"],
-          price: int.parse(grocery["default_price"]),
-          quantity: grocery["default_quantity"],
+          id: groceryListGrocery["id"],
+          name: groceryListGrocery["name"],
+          price: int.parse(groceryListGrocery["default_price"]),
+          quantity: groceryListGrocery["default_quantity"],
         ),
       );
 

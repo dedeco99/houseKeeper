@@ -5,6 +5,7 @@ import "package:pull_to_refresh/pull_to_refresh.dart";
 import "package:housekeeper/components/groceryCard.dart";
 import "package:housekeeper/components/groceryDetail.dart";
 import "package:housekeeper/components/groceryListDetail.dart";
+import "package:housekeeper/components/groceryListGroceryDetail.dart";
 
 import "package:housekeeper/services/groceries.dart";
 import "package:housekeeper/services/grocery.dart";
@@ -88,8 +89,15 @@ class _GroceryListState extends State<GroceryListView> {
           Align(
             alignment: Alignment.bottomRight,
             child: Padding(
-              padding: EdgeInsets.only(bottom: 65),
+              padding: EdgeInsets.only(bottom: 130),
               child: AddFloatingActionButton(child: GroceryDetail()),
+            ),
+          ),
+          Align(
+            alignment: Alignment.bottomRight,
+            child: Padding(
+              padding: EdgeInsets.only(bottom: 65),
+              child: AddFloatingActionButton(child: GroceryListGroceryDetail()),
             ),
           ),
           Align(alignment: Alignment.bottomRight, child: AddFloatingActionButton(child: GroceryListDetail())),
