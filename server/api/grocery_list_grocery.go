@@ -2,6 +2,7 @@ package api
 
 import (
 	"database/sql"
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -67,23 +68,41 @@ func (server *Server) createGroceryListGrocery(ctx *gin.Context) {
 
 	listUUID, err := uuid.Parse(req.ID)
 	groceryUUID, err2 := uuid.Parse(req.Data.Grocery)
-	quantity, err3 := strconv.Atoi(req.Data.Quantity)
 
-	if err != nil || err2 != nil || err3 != nil {
+	if err != nil || err2 != nil {
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
 		return
+	}
+
+	var quantity int = 1
+	if req.Data.Quantity != "" {
+		quantityInt, err := strconv.Atoi(req.Data.Quantity)
+
+		if err != nil {
+			ctx.JSON(http.StatusBadRequest, errorResponse(err))
+			return
+		}
+
+		quantity = quantityInt
+	}
+
+	var price = "0"
+	if req.Data.Price != "" {
+
+		price = req.Data.Price
 	}
 
 	arg := db.CreateGroceryListGroceryParams{
 		GroceryList: listUUID,
 		Grocery:     groceryUUID,
 		Quantity:    int16(quantity),
-		Price:       req.Data.Price,
+		Price:       price,
 	}
 
 	groceryListGrocery, err := server.store.CreateGroceryListGrocery(ctx, arg)
 
 	if err != nil {
+		fmt.Println(err)
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
