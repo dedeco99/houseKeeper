@@ -4,6 +4,7 @@ import "package:pull_to_refresh/pull_to_refresh.dart";
 
 import "package:housekeeper/components/groceryCard.dart";
 import "package:housekeeper/components/groceryDetail.dart";
+import "package:housekeeper/components/groceryListDetail.dart";
 
 import "package:housekeeper/services/groceries.dart";
 import "package:housekeeper/services/grocery.dart";
@@ -82,13 +83,26 @@ class _GroceryListState extends State<GroceryListView> {
               ));
         },
       ),
-      floatingActionButton: const AddGroceryFloatingActionButton(),
+      floatingActionButton: const Stack(
+        children: [
+          Align(
+            alignment: Alignment.bottomRight,
+            child: Padding(
+              padding: EdgeInsets.only(bottom: 65),
+              child: AddFloatingActionButton(child: GroceryDetail()),
+            ),
+          ),
+          Align(alignment: Alignment.bottomRight, child: AddFloatingActionButton(child: GroceryListDetail())),
+        ],
+      ),
     );
   }
 }
 
-class AddGroceryFloatingActionButton extends StatelessWidget {
-  const AddGroceryFloatingActionButton({Key? key}) : super(key: key);
+class AddFloatingActionButton extends StatelessWidget {
+  const AddFloatingActionButton({Key? key, required this.child}) : super(key: key);
+
+  final Widget child;
 
   @override
   Widget build(BuildContext context) {
@@ -99,12 +113,12 @@ class AddGroceryFloatingActionButton extends StatelessWidget {
           builder: (context) => Container(
             color: Colors.grey[900],
             height: 550,
-            child: Wrap(children: const [GroceryDetail()]),
+            child: Wrap(children: [child]),
           ),
         );
       },
-      child: const Icon(Icons.add),
       backgroundColor: Colors.blue,
+      child: const Icon(Icons.add),
     );
   }
 }

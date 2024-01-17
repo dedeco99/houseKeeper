@@ -18,8 +18,10 @@ func NewServer(store *db.Store) *Server {
 	router.GET("/api/accounts/:id", server.getAccount)
 	router.POST("/api/accounts", server.createAccount)
 
-	router.GET("/api/groceries/lists", server.GetGroceryLists)
-	router.GET("/api/groceries/lists/:id", server.GetGroceryListGroceries)
+	router.GET("/api/groceries/lists", server.getGroceryLists)
+	router.POST("/api/groceries/lists", server.createGroceryList)
+
+	router.GET("/api/groceries/lists/:id", server.getGroceryListGroceries)
 
 	server.router = router
 

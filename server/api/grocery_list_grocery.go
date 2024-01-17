@@ -1,8 +1,6 @@
 package api
 
 import (
-	"database/sql"
-	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -13,7 +11,7 @@ type getGroceryListGroceriesRequest struct {
 	ID string `uri:"id" binding:"required"`
 }
 
-func (server *Server) GetGroceryListGroceries(ctx *gin.Context) {
+func (server *Server) getGroceryListGroceries(ctx *gin.Context) {
 	var req getGroceryListGroceriesRequest
 
 	if err := ctx.ShouldBindUri(&req); err != nil {
@@ -30,13 +28,8 @@ func (server *Server) GetGroceryListGroceries(ctx *gin.Context) {
 	}
 
 	groceryListGroceries, err := server.store.GetGroceryListGroceries(ctx, uuid)
-	fmt.Println(groceryListGroceries)
-	if err != nil {
-		if err == sql.ErrNoRows {
-			ctx.JSON(http.StatusNotFound, errorResponse(err))
-			return
-		}
 
+	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}

@@ -67,20 +67,51 @@ class Groceries {
 
       list.clear();
 
-      for (var i = 0; i < json["data"].length; i++) {
-        var grocery = json["data"][i];
+      if (json["data"] != null) {
+        for (var i = 0; i < json["data"].length; i++) {
+          var grocery = json["data"][i];
 
-        list.add(
-          Grocery(
-            id: grocery["id"],
-            name: grocery["name"]["String"],
-            price: int.parse(grocery["price"]),
-            quantity: grocery["quantity"],
-          ),
-        );
+          list.add(
+            Grocery(
+              id: grocery["id"],
+              name: grocery["name"]["String"],
+              price: int.parse(grocery["price"]),
+              quantity: grocery["quantity"],
+            ),
+          );
+        }
       }
 
       listSubject.add(list);
+    } catch (err) {
+      print("error $err");
+    }
+  }
+
+  Future<void> addGroceryList(name) async {
+    try {
+      Response response = await post(
+        Uri(
+          scheme: "http",
+          host: host,
+          port: 5001,
+          path: "/api/groceries/lists",
+        ),
+        headers: <String, String>{
+          "Content-Type": "application/json; charset=UTF-8",
+        },
+        body: jsonEncode({"name": name}),
+      );
+
+      Map json = jsonDecode(response.body);
+
+      if (response.statusCode == 404) throw json["message"];
+
+      var grocery = json["data"];
+
+      lists.insert(0, GroceryList(id: grocery["id"], name: grocery["name"]));
+
+      listsSubject.add(lists);
     } catch (err) {
       print("error $err");
     }
