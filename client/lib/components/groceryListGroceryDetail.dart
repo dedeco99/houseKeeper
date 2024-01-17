@@ -14,7 +14,7 @@ class GroceryListGroceryDetail extends StatefulWidget {
 class _GroceryListGroceryDetailState extends State<GroceryListGroceryDetail> {
   Groceries groceries = GetIt.instance.get<Groceries>();
 
-  late final Grocery? grocery = null;
+  Grocery? grocery = null;
   late final TextEditingController _quantity;
   late final TextEditingController _price;
 
@@ -55,7 +55,9 @@ class _GroceryListGroceryDetailState extends State<GroceryListGroceryDetail> {
                         elevation: 16,
                         style: const TextStyle(color: Colors.deepPurple),
                         underline: Container(height: 2, color: Colors.deepPurpleAccent),
-                        onChanged: (Grocery? value) {},
+                        onChanged: (Grocery? value) {
+                          grocery = value;
+                        },
                         items: groceries.map((Grocery value) {
                           return DropdownMenuItem(value: value, child: Text(value.name));
                         }).toList(),
@@ -102,7 +104,9 @@ class _GroceryListGroceryDetailState extends State<GroceryListGroceryDetail> {
               padding: const EdgeInsets.all(8),
               child: ElevatedButton(
                 onPressed: () async {
-                  await groceries.addGroceryListGrocery("gotem", _quantity.text, _price.text);
+                  if (grocery == null) return;
+
+                  await groceries.addGroceryListGrocery(grocery!.id, _quantity.text, _price.text);
 
                   Navigator.of(context).pop();
                 },

@@ -84,14 +84,16 @@ class Groceries {
     }
   }
 
-  Future<void> getList(String groceryList) async {
+  Future<void> getList(String id) async {
     try {
+      groceryList = id;
+
       Response response = await get(
         Uri(
           scheme: "http",
           host: host,
           port: 5001,
-          path: "/api/grocery_lists/$groceryList",
+          path: "/api/grocery_lists/$id",
         ),
       );
 
@@ -158,7 +160,7 @@ class Groceries {
           scheme: "http",
           host: host,
           port: 5001,
-          path: "/api/grocery_lists/:id/groceries",
+          path: "/api/grocery_lists/$groceryList",
         ),
         headers: <String, String>{
           "Content-Type": "application/json; charset=UTF-8",
@@ -170,19 +172,7 @@ class Groceries {
 
       if (response.statusCode == 404) throw json["message"];
 
-      var groceryListGrocery = json["data"];
-
-      list.insert(
-        0,
-        Grocery(
-          id: groceryListGrocery["id"],
-          name: groceryListGrocery["name"],
-          price: int.parse(groceryListGrocery["default_price"]),
-          quantity: groceryListGrocery["default_quantity"],
-        ),
-      );
-
-      listSubject.add(list);
+      getList(groceryList!);
     } catch (err) {
       print("error $err");
     }
