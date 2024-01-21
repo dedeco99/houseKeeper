@@ -34,7 +34,7 @@ class _GroceryListState extends State<GroceryListView> {
       appBar: AppBar(
         title: Row(children: [
           StreamBuilder(
-            stream: groceries.lists$,
+            stream: groceries.groceryLists$,
             builder: (BuildContext context, AsyncSnapshot snapshot) {
               switch (snapshot.connectionState) {
                 case ConnectionState.active:
@@ -47,7 +47,7 @@ class _GroceryListState extends State<GroceryListView> {
                     style: const TextStyle(color: Colors.deepPurple),
                     underline: Container(height: 2, color: Colors.deepPurpleAccent),
                     onChanged: (GroceryList? value) {
-                      if (value != null) groceries.getList(value.id);
+                      if (value != null) groceries.getGroceryListGroceries(value.id);
                     },
                     items: lists.map((GroceryList value) {
                       return DropdownMenuItem(value: value, child: Text(value.name));
@@ -75,7 +75,7 @@ class _GroceryListState extends State<GroceryListView> {
         elevation: 0,
       ),
       body: StreamBuilder(
-        stream: groceries.list$,
+        stream: groceries.groceryListGroceries$,
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           if (!snapshot.hasData) return const Text("Loading");
 
@@ -92,7 +92,7 @@ class _GroceryListState extends State<GroceryListView> {
                     background: Container(color: Colors.red),
                     child: GroceryCard(grocery: snapshot.data[index]),
                     onDismissed: (direction) {
-                      groceries.deleteGrocery(snapshot.data[index].id);
+                      groceries.deleteGroceryListGrocery(snapshot.data[index].id);
                     },
                   );
                 },

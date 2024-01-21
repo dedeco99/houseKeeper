@@ -5,24 +5,31 @@ import "package:housekeeper/services/grocery.dart";
 import "package:rxdart/rxdart.dart";
 
 class Groceries {
-  String? groceryList;
+  static const String host = "192.168.1.69";
 
   BehaviorSubject<List<Grocery>> groceriesSubject = BehaviorSubject.seeded([]);
-  BehaviorSubject<List<GroceryList>> listsSubject = BehaviorSubject.seeded([]);
-  BehaviorSubject listSubject = BehaviorSubject.seeded([]);
-
-  Groceries() {
-    getLists();
-    getGroceries();
-  }
+  BehaviorSubject<List<GroceryList>> groceryListsSubject = BehaviorSubject.seeded([]);
+  BehaviorSubject groceryListGroceriesSubject = BehaviorSubject.seeded([]);
 
   Stream<List<Grocery>> get groceries$ => groceriesSubject.stream;
   List<Grocery> get groceries => groceriesSubject.value;
-  Stream<List<GroceryList>> get lists$ => listsSubject.stream;
-  List<GroceryList> get lists => listsSubject.value;
-  Stream get list$ => listSubject.stream;
-  List get list => listSubject.value;
-  String host = "192.168.1.69";
+  Stream<List<GroceryList>> get groceryLists$ => groceryListsSubject.stream;
+  List<GroceryList> get groceryLists => groceryListsSubject.value;
+  Stream get groceryListGroceries$ => groceryListGroceriesSubject.stream;
+  List get groceryListGroceries => groceryListGroceriesSubject.value;
+
+  String? currentGroceryList;
+
+  Groceries() {
+    getGroceryLists();
+    getGroceries();
+  }
+
+  void dispose() {
+    groceriesSubject.close();
+    groceryListsSubject.close();
+    groceryListGroceriesSubject.close();
+  }
 
   Future<void> getGroceries() async {
     try {
@@ -53,7 +60,7 @@ class Groceries {
     }
   }
 
-  Future<void> getLists() async {
+  Future<void> getGroceryLists() async {
     try {
       Response response = await get(
         Uri(
@@ -68,57 +75,17 @@ class Groceries {
 
       if (response.statusCode == 404) throw json["message"];
 
-      lists.clear();
+      groceryLists.clear();
 
       for (var i = 0; i < json["data"].length; i++) {
         var groceryList = json["data"][i];
 
-        lists.add(GroceryList(id: groceryList["id"], name: groceryList["name"]));
+        groceryLists.add(GroceryList(id: groceryList["id"], name: groceryList["name"]));
       }
 
-      listsSubject.add(lists);
+      groceryListsSubject.add(groceryLists);
 
-      if (lists.isNotEmpty) getList(lists.first.id);
-    } catch (err) {
-      print("error $err");
-    }
-  }
-
-  Future<void> getList(String id) async {
-    try {
-      groceryList = id;
-
-      Response response = await get(
-        Uri(
-          scheme: "http",
-          host: host,
-          port: 5001,
-          path: "/api/grocery_lists/$id",
-        ),
-      );
-
-      Map json = jsonDecode(response.body);
-
-      if (response.statusCode == 404) throw json["message"];
-
-      list.clear();
-
-      if (json["data"] != null) {
-        for (var i = 0; i < json["data"].length; i++) {
-          var grocery = json["data"][i];
-
-          list.add(
-            Grocery(
-              id: grocery["id"],
-              name: grocery["name"]["String"],
-              price: int.parse(grocery["price"]),
-              quantity: grocery["quantity"],
-            ),
-          );
-        }
-      }
-
-      listSubject.add(list);
+      if (groceryLists.isNotEmpty) getGroceryListGroceries(groceryLists.first.id);
     } catch (err) {
       print("error $err");
     }
@@ -143,11 +110,53 @@ class Groceries {
 
       if (response.statusCode == 404) throw json["message"];
 
-      var grocery = json["data"];
+      var groceryList = json["data"];
 
-      lists.insert(0, GroceryList(id: grocery["id"], name: grocery["name"]));
+      groceryLists.insert(0, GroceryList(id: groceryList["id"], name: groceryList["name"]));
 
-      listsSubject.add(lists);
+      groceryListsSubject.add(groceryLists);
+
+      currentGroceryList = groceryList["id"];
+    } catch (err) {
+      print("error $err");
+    }
+  }
+
+  Future<void> getGroceryListGroceries(String id) async {
+    try {
+      currentGroceryList = id;
+
+      Response response = await get(
+        Uri(
+          scheme: "http",
+          host: host,
+          port: 5001,
+          path: "/api/grocery_lists/$id",
+        ),
+      );
+
+      Map json = jsonDecode(response.body);
+
+      if (response.statusCode == 404) throw json["message"];
+
+      groceryListGroceries.clear();
+
+      if (json["data"] != null) {
+        for (var i = 0; i < json["data"].length; i++) {
+          var grocery = json["data"][i];
+
+          groceryListGroceries.add(
+            Grocery(
+              id: grocery["id"],
+              name: grocery["name"]["String"],
+              price: int.parse(grocery["price"]),
+              quantity: grocery["quantity"],
+            ),
+          );
+        }
+      }
+
+      groceryListGroceriesSubject.add(groceryListGroceries);
     } catch (err) {
       print("error $err");
     }
@@ -160,7 +169,7 @@ class Groceries {
           scheme: "http",
           host: host,
           port: 5001,
-          path: "/api/grocery_lists/$groceryList",
+          path: "/api/grocery_lists/$currentGroceryList",
         ),
         headers: <String, String>{
           "Content-Type": "application/json; charset=UTF-8",
@@ -172,13 +181,13 @@ class Groceries {
 
       if (response.statusCode == 404) throw json["message"];
 
-      getList(groceryList!);
+      getGroceryListGroceries(currentGroceryList!);
     } catch (err) {
       print("error $err");
     }
   }
 
-  Future<void> deleteGrocery(id) async {
+  Future<void> deleteGroceryListGrocery(id) async {
     try {
       Response response = await delete(
         Uri(
@@ -195,15 +204,11 @@ class Groceries {
 
       var grocery = json["data"];
 
-      list.removeWhere((g) => g.id == grocery["id"]);
+      groceryListGroceries.removeWhere((g) => g.id == grocery["id"]);
 
-      listSubject.add(list);
+      groceryListGroceriesSubject.add(groceryListGroceries);
     } catch (err) {
       print("error $err");
     }
-  }
-
-  void dispose() {
-    listSubject.close();
   }
 }
