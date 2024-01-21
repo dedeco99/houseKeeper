@@ -32,31 +32,46 @@ class _GroceryListState extends State<GroceryListView> {
     return Scaffold(
       backgroundColor: Colors.grey[900],
       appBar: AppBar(
-        title: StreamBuilder(
-          stream: groceries.lists$,
-          builder: (BuildContext context, AsyncSnapshot snapshot) {
-            switch (snapshot.connectionState) {
-              case ConnectionState.active:
-                final lists = snapshot.data as List<GroceryList>;
+        title: Row(children: [
+          StreamBuilder(
+            stream: groceries.lists$,
+            builder: (BuildContext context, AsyncSnapshot snapshot) {
+              switch (snapshot.connectionState) {
+                case ConnectionState.active:
+                  final lists = snapshot.data as List<GroceryList>;
 
-                return DropdownButton(
-                  value: groceryList,
-                  icon: const Icon(Icons.arrow_downward),
-                  elevation: 16,
-                  style: const TextStyle(color: Colors.deepPurple),
-                  underline: Container(height: 2, color: Colors.deepPurpleAccent),
-                  onChanged: (GroceryList? value) {
-                    if (value != null) groceries.getList(value.id);
-                  },
-                  items: lists.map((GroceryList value) {
-                    return DropdownMenuItem(value: value, child: Text(value.name));
-                  }).toList(),
-                );
-              default:
-                return const Text("Loading");
-            }
-          },
-        ),
+                  return DropdownButton(
+                    value: groceryList,
+                    icon: const Icon(Icons.arrow_downward),
+                    elevation: 16,
+                    style: const TextStyle(color: Colors.deepPurple),
+                    underline: Container(height: 2, color: Colors.deepPurpleAccent),
+                    onChanged: (GroceryList? value) {
+                      if (value != null) groceries.getList(value.id);
+                    },
+                    items: lists.map((GroceryList value) {
+                      return DropdownMenuItem(value: value, child: Text(value.name));
+                    }).toList(),
+                  );
+                default:
+                  return const Text("Loading");
+              }
+            },
+          ),
+          IconButton(
+            icon: const Icon(Icons.add),
+            onPressed: () {
+              showModalBottomSheet(
+                context: context,
+                builder: (context) => Container(
+                  color: Colors.grey[900],
+                  height: 550,
+                  child: const Wrap(children: [GroceryListDetail()]),
+                ),
+              );
+            },
+          ),
+        ]),
         elevation: 0,
       ),
       body: StreamBuilder(
@@ -89,18 +104,14 @@ class _GroceryListState extends State<GroceryListView> {
           Align(
             alignment: Alignment.bottomRight,
             child: Padding(
-              padding: EdgeInsets.only(bottom: 130),
+              padding: EdgeInsets.only(bottom: 65),
               child: AddFloatingActionButton(child: GroceryDetail()),
             ),
           ),
           Align(
             alignment: Alignment.bottomRight,
-            child: Padding(
-              padding: EdgeInsets.only(bottom: 65),
-              child: AddFloatingActionButton(child: GroceryListGroceryDetail()),
-            ),
+            child: AddFloatingActionButton(child: GroceryListGroceryDetail()),
           ),
-          Align(alignment: Alignment.bottomRight, child: AddFloatingActionButton(child: GroceryListDetail())),
         ],
       ),
     );
@@ -116,7 +127,7 @@ class AddFloatingActionButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return FloatingActionButton(
       onPressed: () {
-        showBottomSheet(
+        showModalBottomSheet(
           context: context,
           builder: (context) => Container(
             color: Colors.grey[900],
