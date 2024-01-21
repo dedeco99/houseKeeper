@@ -70,7 +70,7 @@ func (q *Queries) GetGroceryLists(ctx context.Context) ([]GroceryList, error) {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []GroceryList
+	items := []GroceryList{}
 	for rows.Next() {
 		var i GroceryList
 		if err := rows.Scan(

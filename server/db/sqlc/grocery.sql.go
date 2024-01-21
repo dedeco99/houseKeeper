@@ -88,7 +88,7 @@ func (q *Queries) GetGroceries(ctx context.Context) ([]Grocery, error) {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []Grocery
+	items := []Grocery{}
 	for rows.Next() {
 		var i Grocery
 		if err := rows.Scan(

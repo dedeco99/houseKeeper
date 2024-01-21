@@ -2,9 +2,9 @@ package api
 
 import (
 	"database/sql"
-	"fmt"
 	"net/http"
 	"strconv"
+	"strings"
 
 	db "github.com/dedeco99/housekeeper/db/sqlc"
 	"github.com/gin-gonic/gin"
@@ -88,7 +88,6 @@ func (server *Server) createGroceryListGrocery(ctx *gin.Context) {
 
 	var price = "0"
 	if req.Data.Price != "" {
-
 		price = req.Data.Price
 	}
 
@@ -102,12 +101,30 @@ func (server *Server) createGroceryListGrocery(ctx *gin.Context) {
 	groceryListGrocery, err := server.store.CreateGroceryListGrocery(ctx, arg)
 
 	if err != nil {
-		fmt.Println(err)
-		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		if strings.Contains(err.Error(), "duplicate key") {
+			arg := db.UpdateGroceryListGroceryParams{
+				Grocery:  groceryUUID,
+				Quantity: int16(quantity),
+				Price:    price,
+			}
+
+			groceryListGrocery, err := server.store.UpdateGroceryListGrocery(ctx, arg)
+
+			if err != nil {
+				ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+			} else {
+				ctx.JSON(http.StatusOK, response("UPDATE_GROCERY_LIST_GROCERY", groceryListGrocery))
+			}
+
+			return
+		} else {
+			ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		}
+
 		return
 	}
 
-	ctx.JSON(http.StatusOK, response("CREATE_GROCERY_LIST_GROCERY", groceryListGrocery))
+	ctx.JSON(http.StatusCreated, response("CREATE_GROCERY_LIST_GROCERY", groceryListGrocery))
 
 }
 

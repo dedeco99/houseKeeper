@@ -37,5 +37,5 @@ func (server *Server) createGroceryList(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, response("CREATE_GROCERY_LIST", groceryList))
+	ctx.JSON(http.StatusCreated, response("CREATE_GROCERY_LIST", groceryList))
 }

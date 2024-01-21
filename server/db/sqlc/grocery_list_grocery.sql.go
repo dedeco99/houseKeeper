@@ -84,6 +84,8 @@ FROM
 WHERE
   grocery_list_grocery.active = TRUE
   AND grocery_list = $1
+ORDER BY
+  grocery_list_grocery.created DESC
 `
 
 type GetGroceryListGroceriesRow struct {
@@ -104,7 +106,7 @@ func (q *Queries) GetGroceryListGroceries(ctx context.Context, groceryList uuid.
 		return nil, err
 	}
 	defer rows.Close()
-	var items []GetGroceryListGroceriesRow
+	items := []GetGroceryListGroceriesRow{}
 	for rows.Next() {
 		var i GetGroceryListGroceriesRow
 		if err := rows.Scan(
@@ -135,29 +137,22 @@ const updateGroceryListGrocery = `-- name: UpdateGroceryListGrocery :one
 UPDATE
   grocery_list_grocery
 SET
-  grocery_list = $2,
-  quantity = $3,
-  price = $4
+  quantity = $2,
+  price = $3
 WHERE
-  id = $1
+  grocery = $1
 RETURNING
   id, active, grocery_list, grocery, quantity, price, created
 `
 
 type UpdateGroceryListGroceryParams struct {
-	ID          uuid.UUID `json:"id"`
-	GroceryList uuid.UUID `json:"grocery_list"`
-	Quantity    int16     `json:"quantity"`
-	Price       string    `json:"price"`
+	Grocery  uuid.UUID `json:"grocery"`
+	Quantity int16     `json:"quantity"`
+	Price    string    `json:"price"`
 }
 
 func (q *Queries) UpdateGroceryListGrocery(ctx context.Context, arg UpdateGroceryListGroceryParams) (GroceryListGrocery, error) {
-	row := q.db.QueryRowContext(ctx, updateGroceryListGrocery,
-		arg.ID,
-		arg.GroceryList,
-		arg.Quantity,
-		arg.Price,
-	)
+	row := q.db.QueryRowContext(ctx, updateGroceryListGrocery, arg.Grocery, arg.Quantity, arg.Price)
 	var i GroceryListGrocery
 	err := row.Scan(
 		&i.ID,
