@@ -106,7 +106,7 @@ class _GroceryListGroceryDetailState extends State<GroceryListGroceryDetail> {
                 onPressed: () async {
                   if (grocery == null) return;
 
-                  await groceries.addGroceryListGrocery(grocery!.id, _quantity.text, _price.text);
+                  await groceries.addGroceryListGrocery(grocery!.id, int.parse(_quantity.text), _price.text);
 
                   Navigator.of(context).pop();
                 },

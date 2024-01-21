@@ -3,7 +3,6 @@ package api
 import (
 	"database/sql"
 	"net/http"
-	"strconv"
 	"strings"
 
 	db "github.com/dedeco99/housekeeper/db/sqlc"
@@ -46,7 +45,7 @@ type createGroceryListGroceryRequest struct {
 
 	Data struct {
 		Grocery  string `json:"grocery"`
-		Quantity string `json:"quantity"`
+		Quantity int    `json:"quantity"`
 		Price    string `json:"price"`
 	}
 }
@@ -74,18 +73,6 @@ func (server *Server) createGroceryListGrocery(ctx *gin.Context) {
 		return
 	}
 
-	var quantity int = 1
-	if req.Data.Quantity != "" {
-		quantityInt, err := strconv.Atoi(req.Data.Quantity)
-
-		if err != nil {
-			ctx.JSON(http.StatusBadRequest, errorResponse(err))
-			return
-		}
-
-		quantity = quantityInt
-	}
-
 	var price = "0"
 	if req.Data.Price != "" {
 		price = req.Data.Price
@@ -94,7 +81,7 @@ func (server *Server) createGroceryListGrocery(ctx *gin.Context) {
 	arg := db.CreateGroceryListGroceryParams{
 		GroceryList: listUUID,
 		Grocery:     groceryUUID,
-		Quantity:    int16(quantity),
+		Quantity:    int16(req.Data.Quantity),
 		Price:       price,
 	}
 
@@ -104,7 +91,7 @@ func (server *Server) createGroceryListGrocery(ctx *gin.Context) {
 		if strings.Contains(err.Error(), "duplicate key") {
 			arg := db.UpdateGroceryListGroceryParams{
 				Grocery:  groceryUUID,
-				Quantity: int16(quantity),
+				Quantity: int16(req.Data.Quantity),
 				Price:    price,
 			}
 

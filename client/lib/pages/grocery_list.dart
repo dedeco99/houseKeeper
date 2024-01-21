@@ -14,10 +14,10 @@ class GroceryListView extends StatefulWidget {
   const GroceryListView({Key? key}) : super(key: key);
 
   @override
-  _GroceryListState createState() => _GroceryListState();
+  _GroceryListViewState createState() => _GroceryListViewState();
 }
 
-class _GroceryListState extends State<GroceryListView> {
+class _GroceryListViewState extends State<GroceryListView> {
   Groceries groceries = GetIt.instance.get<Groceries>();
   RefreshController refreshController = RefreshController();
 

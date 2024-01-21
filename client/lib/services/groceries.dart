@@ -91,7 +91,7 @@ class Groceries {
     }
   }
 
-  Future<void> addGroceryList(name) async {
+  Future<void> addGroceryList(String name) async {
     try {
       Response response = await post(
         Uri(
@@ -147,7 +147,7 @@ class Groceries {
 
           groceryListGroceries.add(
             Grocery(
-              id: grocery["id"],
+              id: grocery["grocery_id"],
               name: grocery["name"]["String"],
               price: int.parse(grocery["price"]),
               quantity: grocery["quantity"],
@@ -162,7 +162,7 @@ class Groceries {
     }
   }
 
-  Future<void> addGroceryListGrocery(grocery, quantity, price) async {
+  Future<void> addGroceryListGrocery(String grocery, int quantity, String price) async {
     try {
       Response response = await post(
         Uri(
@@ -179,7 +179,7 @@ class Groceries {
 
       Map json = jsonDecode(response.body);
 
-      if (response.statusCode == 404) throw json["message"];
+      if (response.statusCode != 201 && response.statusCode != 200) throw json["message"];
 
       getGroceryListGroceries(currentGroceryList!);
     } catch (err) {
@@ -187,7 +187,7 @@ class Groceries {
     }
   }
 
-  Future<void> deleteGroceryListGrocery(id) async {
+  Future<void> deleteGroceryListGrocery(String id) async {
     try {
       Response response = await delete(
         Uri(

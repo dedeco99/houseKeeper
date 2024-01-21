@@ -1,6 +1,7 @@
 -- name: GetGroceryListGroceries :many
 SELECT
   grocery_list_grocery.*,
+  grocery.id AS grocery_id,
   grocery.name,
   grocery.category
 FROM

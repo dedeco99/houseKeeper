@@ -76,6 +76,7 @@ func (q *Queries) DeleteGroceryListGrocery(ctx context.Context, id uuid.UUID) (G
 const getGroceryListGroceries = `-- name: GetGroceryListGroceries :many
 SELECT
   grocery_list_grocery.id, grocery_list_grocery.active, grocery_list_grocery.grocery_list, grocery_list_grocery.grocery, grocery_list_grocery.quantity, grocery_list_grocery.price, grocery_list_grocery.created,
+  grocery.id AS grocery_id,
   grocery.name,
   grocery.category
 FROM
@@ -96,6 +97,7 @@ type GetGroceryListGroceriesRow struct {
 	Quantity    int16          `json:"quantity"`
 	Price       string         `json:"price"`
 	Created     time.Time      `json:"created"`
+	GroceryID   uuid.NullUUID  `json:"grocery_id"`
 	Name        sql.NullString `json:"name"`
 	Category    uuid.NullUUID  `json:"category"`
 }
@@ -117,6 +119,7 @@ func (q *Queries) GetGroceryListGroceries(ctx context.Context, groceryList uuid.
 			&i.Quantity,
 			&i.Price,
 			&i.Created,
+			&i.GroceryID,
 			&i.Name,
 			&i.Category,
 		); err != nil {
