@@ -2,10 +2,10 @@ import "package:flutter/material.dart";
 import "package:get_it/get_it.dart";
 import "package:pull_to_refresh/pull_to_refresh.dart";
 
-import "package:housekeeper/components/groceryCard.dart";
-import "package:housekeeper/components/groceryDetail.dart";
-import "package:housekeeper/components/groceryListDetail.dart";
-import "package:housekeeper/components/groceryListGroceryDetail.dart";
+import "package:housekeeper/components/grocery_card.dart";
+import "package:housekeeper/components/grocery_detail.dart";
+import "package:housekeeper/components/grocery_list_detail.dart";
+import "package:housekeeper/components/grocery_list_grocery_detail.dart";
 
 import "package:housekeeper/services/groceries.dart";
 import "package:housekeeper/services/grocery.dart";
