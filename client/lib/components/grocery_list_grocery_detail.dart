@@ -53,10 +53,8 @@ class _GroceryListGroceryDetailState extends State<GroceryListGroceryDetail> {
                         value: grocery,
                         icon: const Icon(Icons.arrow_downward),
                         elevation: 16,
-                        style: const TextStyle(color: Colors.deepPurple),
-                        underline: Container(height: 2, color: Colors.deepPurpleAccent),
                         onChanged: (Grocery? value) {
-                          grocery = value;
+                          setState(() => grocery = value);
                         },
                         items: groceries.map((Grocery value) {
                           return DropdownMenuItem(value: value, child: Text(value.name));
@@ -73,15 +71,7 @@ class _GroceryListGroceryDetailState extends State<GroceryListGroceryDetail> {
               child: TextFormField(
                 controller: _quantity,
                 keyboardType: TextInputType.number,
-                decoration: const InputDecoration(
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.white),
-                  ),
-                  border: OutlineInputBorder(),
-                  labelText: "Quantity",
-                  labelStyle: TextStyle(color: Colors.white),
-                ),
-                style: const TextStyle(color: Colors.white),
+                decoration: const InputDecoration(border: OutlineInputBorder(), labelText: "Quantity"),
               ),
             ),
             Padding(
@@ -89,20 +79,12 @@ class _GroceryListGroceryDetailState extends State<GroceryListGroceryDetail> {
               child: TextFormField(
                 controller: _price,
                 keyboardType: TextInputType.number,
-                decoration: const InputDecoration(
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.white),
-                  ),
-                  border: OutlineInputBorder(),
-                  labelText: "Price",
-                  labelStyle: TextStyle(color: Colors.white),
-                ),
-                style: const TextStyle(color: Colors.white),
+                decoration: const InputDecoration(border: OutlineInputBorder(), labelText: "Price"),
               ),
             ),
             Padding(
               padding: const EdgeInsets.all(8),
-              child: ElevatedButton(
+              child: TextButton(
                 onPressed: () async {
                   if (grocery == null) return;
 

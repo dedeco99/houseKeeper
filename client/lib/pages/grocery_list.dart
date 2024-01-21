@@ -30,7 +30,6 @@ class _GroceryListViewState extends State<GroceryListView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[900],
       appBar: AppBar(
         title: Row(children: [
           StreamBuilder(
@@ -44,10 +43,12 @@ class _GroceryListViewState extends State<GroceryListView> {
                     value: groceryList,
                     icon: const Icon(Icons.arrow_downward),
                     elevation: 16,
-                    style: const TextStyle(color: Colors.deepPurple),
-                    underline: Container(height: 2, color: Colors.deepPurpleAccent),
                     onChanged: (GroceryList? value) {
-                      if (value != null) groceries.getGroceryListGroceries(value.id);
+                      if (value != null) {
+                        setState(() => groceryList = value);
+
+                        groceries.getGroceryListGroceries(value.id);
+                      }
                     },
                     items: lists.map((GroceryList value) {
                       return DropdownMenuItem(value: value, child: Text(value.name));
@@ -63,11 +64,7 @@ class _GroceryListViewState extends State<GroceryListView> {
             onPressed: () {
               showModalBottomSheet(
                 context: context,
-                builder: (context) => Container(
-                  color: Colors.grey[900],
-                  height: 550,
-                  child: const Wrap(children: [GroceryListDetail()]),
-                ),
+                builder: (context) => const SizedBox(height: 550, child: Wrap(children: [GroceryListDetail()])),
               );
             },
           ),
@@ -129,14 +126,9 @@ class AddFloatingActionButton extends StatelessWidget {
       onPressed: () {
         showModalBottomSheet(
           context: context,
-          builder: (context) => Container(
-            color: Colors.grey[900],
-            height: 550,
-            child: Wrap(children: [child]),
-          ),
+          builder: (context) => SizedBox(height: 550, child: Wrap(children: [child])),
         );
       },
-      backgroundColor: Colors.blue,
       child: const Icon(Icons.add),
     );
   }

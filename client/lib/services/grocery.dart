@@ -8,7 +8,7 @@ class GroceryList {
   const GroceryList({required this.id, required this.name});
 
   @override
-  bool operator ==(covariant Grocery other) => id == other.id;
+  bool operator ==(covariant GroceryList other) => id == other.id;
 
   @override
   int get hashCode => id.hashCode;

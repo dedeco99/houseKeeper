@@ -12,7 +12,6 @@ class Home extends StatelessWidget {
         switch (snapshot.connectionState) {
           case ConnectionState.done:
             return Scaffold(
-              backgroundColor: Colors.black,
               appBar: AppBar(title: const Text("House Keeper")),
               body: Center(
                 child: Column(
@@ -22,11 +21,6 @@ class Home extends StatelessWidget {
                       onPressed: () {
                         Navigator.pushNamed(context, "/groceryList");
                       },
-                      style: ButtonStyle(
-                        backgroundColor: MaterialStateProperty.all<Color>(
-                          Colors.grey.shade900,
-                        ),
-                      ),
                       icon: const Icon(Icons.local_grocery_store),
                       label: const Text("Grocery List"),
                     )
@@ -35,12 +29,7 @@ class Home extends StatelessWidget {
               ),
             );
           default:
-            return const Center(
-              child: SpinKitWave(
-                color: Colors.white,
-                size: 75,
-              ),
-            );
+            return const Center(child: SpinKitWave(color: Colors.white, size: 75));
         }
       },
     );

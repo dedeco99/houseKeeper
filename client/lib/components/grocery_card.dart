@@ -20,7 +20,6 @@ class _GroceryCardState extends State<GroceryCard> {
   Widget build(BuildContext context) {
     return Card(
       margin: const EdgeInsets.fromLTRB(0, 5, 0, 5),
-      color: Colors.grey[800],
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Row(
@@ -31,11 +30,7 @@ class _GroceryCardState extends State<GroceryCard> {
               children: [
                 Text(
                   widget.grocery.name,
-                  style: TextStyle(
-                    fontSize: 28,
-                    letterSpacing: 2,
-                    color: Colors.grey[200],
-                  ),
+                  style: TextStyle(fontSize: 28, letterSpacing: 2),
                 ),
               ],
             ),
@@ -44,11 +39,7 @@ class _GroceryCardState extends State<GroceryCard> {
               children: [
                 Text(
                   "${widget.grocery.price} €",
-                  style: TextStyle(
-                    fontSize: 20,
-                    letterSpacing: 2,
-                    color: Colors.grey[200],
-                  ),
+                  style: TextStyle(fontSize: 20, letterSpacing: 2),
                 ),
                 Row(
                   children: [
@@ -66,11 +57,7 @@ class _GroceryCardState extends State<GroceryCard> {
                     ),
                     Text(
                       "x${widget.grocery.quantity}",
-                      style: TextStyle(
-                        fontSize: 20,
-                        letterSpacing: 2,
-                        color: Colors.grey[200],
-                      ),
+                      style: TextStyle(fontSize: 20, letterSpacing: 2),
                     ),
                     IconButton(
                       icon: const Icon(Icons.add),

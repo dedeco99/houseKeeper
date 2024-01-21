@@ -12,7 +12,15 @@ void main() {
 
   runApp(MaterialApp(
     title: "House Keeper",
-    theme: ThemeData(primarySwatch: Colors.blue),
+    theme: ThemeData(
+      colorScheme: ColorScheme.fromSeed(
+        seedColor: Colors.blue,
+        brightness: Brightness.dark,
+      ),
+      textButtonTheme: TextButtonThemeData(
+        style: ButtonStyle(backgroundColor: MaterialStateProperty.all<Color>(Colors.grey.shade800)),
+      ),
+    ),
     home: const Home(),
     routes: {
       "/home": (context) => const Home(),

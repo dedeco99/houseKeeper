@@ -39,20 +39,12 @@ class _GroceryListDetailState extends State<GroceryListDetail> {
               padding: const EdgeInsets.fromLTRB(8, 35, 8, 8),
               child: TextFormField(
                 controller: _name,
-                decoration: const InputDecoration(
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.white),
-                  ),
-                  border: OutlineInputBorder(),
-                  labelText: "Name",
-                  labelStyle: TextStyle(color: Colors.white),
-                ),
-                style: const TextStyle(color: Colors.white),
+                decoration: const InputDecoration(border: OutlineInputBorder(), labelText: "Name"),
               ),
             ),
             Padding(
               padding: const EdgeInsets.all(8),
-              child: ElevatedButton(
+              child: TextButton(
                 onPressed: () async {
                   await groceries.addGroceryList(_name.text);
 

@@ -51,45 +51,21 @@ class _GroceryDetailState extends State<GroceryDetail> {
               padding: const EdgeInsets.fromLTRB(8, 35, 8, 8),
               child: TextFormField(
                 controller: _name,
-                decoration: const InputDecoration(
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.white),
-                  ),
-                  border: OutlineInputBorder(),
-                  labelText: "Name",
-                  labelStyle: TextStyle(color: Colors.white),
-                ),
-                style: const TextStyle(color: Colors.white),
+                decoration: const InputDecoration(border: OutlineInputBorder(), labelText: "Name"),
               ),
             ),
             Padding(
               padding: const EdgeInsets.all(8),
               child: TextFormField(
                 controller: _category,
-                decoration: const InputDecoration(
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.white),
-                  ),
-                  border: OutlineInputBorder(),
-                  labelText: "Category",
-                  labelStyle: TextStyle(color: Colors.white),
-                ),
-                style: const TextStyle(color: Colors.white),
+                decoration: const InputDecoration(border: OutlineInputBorder(), labelText: "Category"),
               ),
             ),
             Padding(
               padding: const EdgeInsets.all(8),
               child: TextFormField(
                 controller: _store,
-                decoration: const InputDecoration(
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.white),
-                  ),
-                  border: OutlineInputBorder(),
-                  labelText: "Store",
-                  labelStyle: TextStyle(color: Colors.white),
-                ),
-                style: const TextStyle(color: Colors.white),
+                decoration: const InputDecoration(border: OutlineInputBorder(), labelText: "Store"),
               ),
             ),
             Padding(
@@ -97,15 +73,7 @@ class _GroceryDetailState extends State<GroceryDetail> {
               child: TextFormField(
                 controller: _quantity,
                 keyboardType: TextInputType.number,
-                decoration: const InputDecoration(
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.white),
-                  ),
-                  border: OutlineInputBorder(),
-                  labelText: "Quantity",
-                  labelStyle: TextStyle(color: Colors.white),
-                ),
-                style: const TextStyle(color: Colors.white),
+                decoration: const InputDecoration(border: OutlineInputBorder(), labelText: "Quantity"),
               ),
             ),
             Padding(
@@ -113,20 +81,12 @@ class _GroceryDetailState extends State<GroceryDetail> {
               child: TextFormField(
                 controller: _price,
                 keyboardType: TextInputType.number,
-                decoration: const InputDecoration(
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.white),
-                  ),
-                  border: OutlineInputBorder(),
-                  labelText: "Price",
-                  labelStyle: TextStyle(color: Colors.white),
-                ),
-                style: const TextStyle(color: Colors.white),
+                decoration: const InputDecoration(border: OutlineInputBorder(), labelText: "Price"),
               ),
             ),
             Padding(
               padding: const EdgeInsets.all(8),
-              child: ElevatedButton(
+              child: TextButton(
                 onPressed: () async {
                   /*
                   await groceries.addGrocery(
