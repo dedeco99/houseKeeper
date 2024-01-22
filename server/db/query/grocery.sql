@@ -8,20 +8,19 @@ WHERE
 ORDER BY
   name DESC;
 
--- name: CreateGrocery :one
-INSERT INTO grocery(name, category, default_quantity, default_price)
-  VALUES ($1, $2, $3, $4)
+-- name: AddGrocery :one
+INSERT INTO grocery(name, default_quantity, default_price)
+  VALUES ($1, $2, $3)
 RETURNING
   *;
 
--- name: UpdateGrocery :one
+-- name: EditGrocery :one
 UPDATE
   grocery
 SET
   name = $2,
-  category = $3,
-  default_quantity = $4,
-  default_price = $5
+  default_quantity = $3,
+  default_price = $4
 WHERE
   id = $1
 RETURNING

@@ -70,6 +70,7 @@ func (server *Server) addGroceryListGrocery(ctx *gin.Context) {
 
 	if err != nil || err2 != nil {
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+
 		return
 	}
 

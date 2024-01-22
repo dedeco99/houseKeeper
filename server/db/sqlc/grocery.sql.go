@@ -11,27 +11,21 @@ import (
 	"github.com/google/uuid"
 )
 
-const createGrocery = `-- name: CreateGrocery :one
-INSERT INTO grocery(name, category, default_quantity, default_price)
-  VALUES ($1, $2, $3, $4)
+const addGrocery = `-- name: AddGrocery :one
+INSERT INTO grocery(name, default_quantity, default_price)
+  VALUES ($1, $2, $3)
 RETURNING
   id, active, name, category, default_quantity, default_price, created
 `
 
-type CreateGroceryParams struct {
-	Name            string        `json:"name"`
-	Category        uuid.NullUUID `json:"category"`
-	DefaultQuantity int16         `json:"default_quantity"`
-	DefaultPrice    string        `json:"default_price"`
+type AddGroceryParams struct {
+	Name            string `json:"name"`
+	DefaultQuantity int16  `json:"default_quantity"`
+	DefaultPrice    string `json:"default_price"`
 }
 
-func (q *Queries) CreateGrocery(ctx context.Context, arg CreateGroceryParams) (Grocery, error) {
-	row := q.db.QueryRowContext(ctx, createGrocery,
-		arg.Name,
-		arg.Category,
-		arg.DefaultQuantity,
-		arg.DefaultPrice,
-	)
+func (q *Queries) AddGrocery(ctx context.Context, arg AddGroceryParams) (Grocery, error) {
+	row := q.db.QueryRowContext(ctx, addGrocery, arg.Name, arg.DefaultQuantity, arg.DefaultPrice)
 	var i Grocery
 	err := row.Scan(
 		&i.ID,
@@ -58,6 +52,46 @@ RETURNING
 
 func (q *Queries) DeleteGrocery(ctx context.Context, id uuid.UUID) (Grocery, error) {
 	row := q.db.QueryRowContext(ctx, deleteGrocery, id)
+	var i Grocery
+	err := row.Scan(
+		&i.ID,
+		&i.Active,
+		&i.Name,
+		&i.Category,
+		&i.DefaultQuantity,
+		&i.DefaultPrice,
+		&i.Created,
+	)
+	return i, err
+}
+
+const editGrocery = `-- name: EditGrocery :one
+UPDATE
+  grocery
+SET
+  name = $2,
+  default_quantity = $3,
+  default_price = $4
+WHERE
+  id = $1
+RETURNING
+  id, active, name, category, default_quantity, default_price, created
+`
+
+type EditGroceryParams struct {
+	ID              uuid.UUID `json:"id"`
+	Name            string    `json:"name"`
+	DefaultQuantity int16     `json:"default_quantity"`
+	DefaultPrice    string    `json:"default_price"`
+}
+
+func (q *Queries) EditGrocery(ctx context.Context, arg EditGroceryParams) (Grocery, error) {
+	row := q.db.QueryRowContext(ctx, editGrocery,
+		arg.ID,
+		arg.Name,
+		arg.DefaultQuantity,
+		arg.DefaultPrice,
+	)
 	var i Grocery
 	err := row.Scan(
 		&i.ID,
@@ -111,47 +145,4 @@ func (q *Queries) GetGroceries(ctx context.Context) ([]Grocery, error) {
 		return nil, err
 	}
 	return items, nil
-}
-
-const updateGrocery = `-- name: UpdateGrocery :one
-UPDATE
-  grocery
-SET
-  name = $2,
-  category = $3,
-  default_quantity = $4,
-  default_price = $5
-WHERE
-  id = $1
-RETURNING
-  id, active, name, category, default_quantity, default_price, created
-`
-
-type UpdateGroceryParams struct {
-	ID              uuid.UUID     `json:"id"`
-	Name            string        `json:"name"`
-	Category        uuid.NullUUID `json:"category"`
-	DefaultQuantity int16         `json:"default_quantity"`
-	DefaultPrice    string        `json:"default_price"`
-}
-
-func (q *Queries) UpdateGrocery(ctx context.Context, arg UpdateGroceryParams) (Grocery, error) {
-	row := q.db.QueryRowContext(ctx, updateGrocery,
-		arg.ID,
-		arg.Name,
-		arg.Category,
-		arg.DefaultQuantity,
-		arg.DefaultPrice,
-	)
-	var i Grocery
-	err := row.Scan(
-		&i.ID,
-		&i.Active,
-		&i.Name,
-		&i.Category,
-		&i.DefaultQuantity,
-		&i.DefaultPrice,
-		&i.Created,
-	)
-	return i, err
 }

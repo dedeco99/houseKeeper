@@ -53,6 +53,34 @@ func (q *Queries) DeleteGroceryList(ctx context.Context, id uuid.UUID) (GroceryL
 	return i, err
 }
 
+const editGroceryList = `-- name: EditGroceryList :one
+UPDATE
+  grocery_list
+SET
+  name = $2
+WHERE
+  id = $1
+RETURNING
+  id, active, name, created
+`
+
+type EditGroceryListParams struct {
+	ID   uuid.UUID `json:"id"`
+	Name string    `json:"name"`
+}
+
+func (q *Queries) EditGroceryList(ctx context.Context, arg EditGroceryListParams) (GroceryList, error) {
+	row := q.db.QueryRowContext(ctx, editGroceryList, arg.ID, arg.Name)
+	var i GroceryList
+	err := row.Scan(
+		&i.ID,
+		&i.Active,
+		&i.Name,
+		&i.Created,
+	)
+	return i, err
+}
+
 const getGroceryLists = `-- name: GetGroceryLists :many
 SELECT
   id, active, name, created
@@ -90,32 +118,4 @@ func (q *Queries) GetGroceryLists(ctx context.Context) ([]GroceryList, error) {
 		return nil, err
 	}
 	return items, nil
-}
-
-const updateGroceryList = `-- name: UpdateGroceryList :one
-UPDATE
-  grocery_list
-SET
-  name = $2
-WHERE
-  id = $1
-RETURNING
-  id, active, name, created
-`
-
-type UpdateGroceryListParams struct {
-	ID   uuid.UUID `json:"id"`
-	Name string    `json:"name"`
-}
-
-func (q *Queries) UpdateGroceryList(ctx context.Context, arg UpdateGroceryListParams) (GroceryList, error) {
-	row := q.db.QueryRowContext(ctx, updateGroceryList, arg.ID, arg.Name)
-	var i GroceryList
-	err := row.Scan(
-		&i.ID,
-		&i.Active,
-		&i.Name,
-		&i.Created,
-	)
-	return i, err
 }

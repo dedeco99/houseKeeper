@@ -14,7 +14,7 @@ INSERT INTO grocery_list(name)
 RETURNING
   *;
 
--- name: UpdateGroceryList :one
+-- name: EditGroceryList :one
 UPDATE
   grocery_list
 SET
