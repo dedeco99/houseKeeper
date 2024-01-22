@@ -7,7 +7,7 @@ import "package:housekeeper/services/grocery.dart";
 class GroceryListGroceryDetail extends StatefulWidget {
   GroceryListGrocery? groceryListGrocery;
 
-  GroceryListGroceryDetail({Key? key, GroceryListGrocery? grocery}) : super(key: key);
+  GroceryListGroceryDetail({Key? key, this.groceryListGrocery}) : super(key: key);
 
   @override
   _GroceryListGroceryDetailState createState() => _GroceryListGroceryDetailState();

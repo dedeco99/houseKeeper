@@ -1,6 +1,7 @@
 import "package:flutter/material.dart";
 import "package:get_it/get_it.dart";
 import "package:pull_to_refresh/pull_to_refresh.dart";
+import "package:flutter_slidable/flutter_slidable.dart";
 
 import "package:housekeeper/components/grocery_list_grocery_card.dart";
 import "package:housekeeper/components/grocery_list_detail.dart";
@@ -73,23 +74,49 @@ class _GroceryListViewState extends State<GroceryListView> {
           if (!snapshot.hasData) return const Text("Loading");
 
           return SmartRefresher(
-              enablePullDown: true,
-              header: const WaterDropMaterialHeader(),
-              controller: refreshController,
-              onRefresh: onRefresh,
-              child: ListView.builder(
-                itemCount: snapshot.data.length,
-                itemBuilder: (context, index) {
-                  return Dismissible(
-                    key: Key(snapshot.data[index].id),
-                    background: Container(color: Colors.red),
-                    child: GroceryListGroceryCard(groceryListGrocery: snapshot.data[index]),
-                    onDismissed: (direction) {
-                      groceries.deleteGroceryListGrocery(snapshot.data[index].id);
-                    },
-                  );
-                },
-              ));
+            enablePullDown: true,
+            header: const WaterDropMaterialHeader(),
+            controller: refreshController,
+            onRefresh: onRefresh,
+            child: ListView.builder(
+              itemCount: snapshot.data.length,
+              itemBuilder: (context, index) {
+                final GroceryListGrocery grocery = snapshot.data[index];
+
+                return Slidable(
+                  key: Key(grocery.id),
+                  endActionPane: ActionPane(
+                    motion: const BehindMotion(),
+                    children: [
+                      SlidableAction(
+                        onPressed: (context) => showModalBottomSheet(
+                          context: context,
+                          builder: (context) => GroceryListGroceryDetail(groceryListGrocery: grocery),
+                        ),
+                        backgroundColor: Colors.blue,
+                        icon: Icons.edit,
+                        label: "Editar",
+                      ),
+                      SlidableAction(
+                        autoClose: false,
+                        onPressed: (context) async {
+                          await groceries.deleteGroceryListGrocery(grocery.id);
+                        },
+                        backgroundColor: Colors.red,
+                        icon: Icons.delete,
+                        label: "Apagar",
+                        borderRadius: const BorderRadius.only(
+                          topRight: Radius.circular(5),
+                          bottomRight: Radius.circular(5),
+                        ),
+                      ),
+                    ],
+                  ),
+                  child: GroceryListGroceryCard(groceryListGrocery: grocery),
+                );
+              },
+            ),
+          );
         },
       ),
       floatingActionButton: FloatingActionButton(
