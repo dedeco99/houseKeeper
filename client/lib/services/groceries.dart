@@ -18,7 +18,7 @@ class Groceries {
   Stream<List<GroceryListGrocery>> get groceryListGroceries$ => groceryListGroceriesSubject.stream;
   List<GroceryListGrocery> get groceryListGroceries => groceryListGroceriesSubject.value;
 
-  String? currentGroceryList;
+  GroceryList? currentGroceryList;
 
   Groceries() {
     getGroceryLists();
@@ -44,7 +44,7 @@ class Groceries {
 
       Map json = jsonDecode(response.body);
 
-      if (response.statusCode == 404) throw json["message"];
+      if (response.statusCode != 200) throw json["message"];
 
       groceries.clear();
 
@@ -73,7 +73,7 @@ class Groceries {
 
       Map json = jsonDecode(response.body);
 
-      if (response.statusCode == 404) throw json["message"];
+      if (response.statusCode != 200) throw json["message"];
 
       groceryLists.clear();
 
@@ -85,7 +85,7 @@ class Groceries {
 
       groceryListsSubject.add(groceryLists);
 
-      if (groceryLists.isNotEmpty) getGroceryListGroceries(groceryLists.first.id);
+      if (groceryLists.isNotEmpty) getGroceryListGroceries(groceryLists.first);
     } catch (err) {
       print("error $err");
     }
@@ -108,7 +108,7 @@ class Groceries {
 
       Map json = jsonDecode(response.body);
 
-      if (response.statusCode == 404) throw json["message"];
+      if (response.statusCode != 201) throw json["message"];
 
       var groceryList = json["data"];
 
@@ -122,22 +122,22 @@ class Groceries {
     }
   }
 
-  Future<void> getGroceryListGroceries(String id) async {
+  Future<void> getGroceryListGroceries(GroceryList groceryList) async {
     try {
-      currentGroceryList = id;
+      currentGroceryList = groceryList;
 
       Response response = await get(
         Uri(
           scheme: "http",
           host: host,
           port: 5001,
-          path: "/api/grocery_lists/$id",
+          path: "/api/grocery_lists/${groceryList.id}",
         ),
       );
 
       Map json = jsonDecode(response.body);
 
-      if (response.statusCode == 404) throw json["message"];
+      if (response.statusCode != 200) throw json["message"];
 
       groceryListGroceries.clear();
 
@@ -163,19 +163,19 @@ class Groceries {
     }
   }
 
-  Future<void> addGroceryListGrocery(String grocery, int quantity, String price) async {
+  Future<void> addGroceryListGrocery(Grocery grocery, int quantity, String price) async {
     try {
       Response response = await post(
         Uri(
           scheme: "http",
           host: host,
           port: 5001,
-          path: "/api/grocery_lists/$currentGroceryList",
+          path: "/api/grocery_lists/${currentGroceryList!.id}",
         ),
         headers: <String, String>{
           "Content-Type": "application/json; charset=UTF-8",
         },
-        body: jsonEncode({"grocery": grocery, "quantity": quantity, "price": price}),
+        body: jsonEncode({"grocery": grocery.id, "quantity": quantity, "price": price}),
       );
 
       Map json = jsonDecode(response.body);
@@ -188,20 +188,20 @@ class Groceries {
     }
   }
 
-  Future<void> deleteGroceryListGrocery(String id) async {
+  Future<void> deleteGroceryListGrocery(GroceryListGrocery groceryListGrocery) async {
     try {
       Response response = await delete(
         Uri(
           scheme: "http",
           host: host,
           port: 5001,
-          path: "/api/grocery_lists/groceries/$id",
+          path: "/api/grocery_lists/groceries/${groceryListGrocery.id}",
         ),
       );
 
       Map json = jsonDecode(response.body);
 
-      if (response.statusCode == 404) throw json["message"];
+      if (response.statusCode != 200) throw json["message"];
 
       var grocery = json["data"];
 

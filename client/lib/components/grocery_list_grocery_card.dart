@@ -53,7 +53,7 @@ class _GroceryCardState extends State<GroceryListGroceryCard> {
                         onPressed: widget.groceryListGrocery.quantity > 1
                             ? () {
                                 groceries.addGroceryListGrocery(
-                                  widget.groceryListGrocery.id,
+                                  widget.groceryListGrocery.grocery,
                                   widget.groceryListGrocery.quantity - 1,
                                   widget.groceryListGrocery.price.toString(),
                                 );
@@ -68,7 +68,7 @@ class _GroceryCardState extends State<GroceryListGroceryCard> {
                         icon: const Icon(Icons.add),
                         onPressed: () {
                           groceries.addGroceryListGrocery(
-                            widget.groceryListGrocery.id,
+                            widget.groceryListGrocery.grocery,
                             widget.groceryListGrocery.quantity + 1,
                             widget.groceryListGrocery.price.toString(),
                           );

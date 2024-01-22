@@ -47,7 +47,7 @@ class _GroceryListViewState extends State<GroceryListView> {
                       if (value != null) {
                         setState(() => groceryList = value);
 
-                        groceries.getGroceryListGroceries(value.id);
+                        groceries.getGroceryListGroceries(value);
                       }
                     },
                     items: lists.map((GroceryList value) {
@@ -100,7 +100,7 @@ class _GroceryListViewState extends State<GroceryListView> {
                       SlidableAction(
                         autoClose: false,
                         onPressed: (context) async {
-                          await groceries.deleteGroceryListGrocery(grocery.id);
+                          await groceries.deleteGroceryListGrocery(grocery);
                         },
                         backgroundColor: Colors.red,
                         icon: Icons.delete,
