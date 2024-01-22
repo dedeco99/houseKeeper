@@ -60,6 +60,43 @@ class Groceries {
     }
   }
 
+  Future<void> addGrocery(String name, int defaultQuantity, String defaultPrice) async {
+    try {
+      Response response = await post(
+        Uri(
+          scheme: "http",
+          host: host,
+          port: 5001,
+          path: "/api/groceries",
+        ),
+        headers: <String, String>{
+          "Content-Type": "application/json; charset=UTF-8",
+        },
+        body: jsonEncode({"name": name, "defaultQuantity": defaultQuantity, "defaultPrice": defaultPrice}),
+      );
+
+      Map json = jsonDecode(response.body);
+
+      if (response.statusCode != 201) throw json["message"];
+
+      var grocery = json["data"];
+      print(grocery);
+      groceries.insert(
+        0,
+        Grocery(
+          id: grocery["id"],
+          name: grocery["name"],
+          defaultQuantity: grocery["default_quantity"],
+          defaultPrice: num.parse(grocery["default_price"]),
+        ),
+      );
+
+      groceriesSubject.add(groceries);
+    } catch (err) {
+      print("error $err");
+    }
+  }
+
   Future<void> deleteGrocery(Grocery grocery) async {
     try {
       Response response = await delete(
