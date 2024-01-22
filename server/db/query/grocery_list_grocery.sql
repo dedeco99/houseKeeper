@@ -34,12 +34,8 @@ RETURNING
   *;
 
 -- name: DeleteGroceryListGrocery :one
-UPDATE
-  grocery_list_grocery
-SET
-  active = NOT active
-WHERE
-  id = $1
+DELETE FROM grocery_list_grocery
+WHERE id = $1
 RETURNING
   *;
 
