@@ -2,8 +2,7 @@ import "package:flutter/material.dart";
 import "package:get_it/get_it.dart";
 import "package:pull_to_refresh/pull_to_refresh.dart";
 
-import "package:housekeeper/components/grocery_card.dart";
-import "package:housekeeper/components/grocery_detail.dart";
+import "package:housekeeper/components/grocery_list_grocery_card.dart";
 import "package:housekeeper/components/grocery_list_detail.dart";
 import "package:housekeeper/components/grocery_list_grocery_detail.dart";
 
@@ -62,10 +61,7 @@ class _GroceryListViewState extends State<GroceryListView> {
           IconButton(
             icon: const Icon(Icons.add),
             onPressed: () {
-              showModalBottomSheet(
-                context: context,
-                builder: (context) => const SizedBox(height: 550, child: Wrap(children: [GroceryListDetail()])),
-              );
+              showModalBottomSheet(context: context, builder: (context) => const GroceryListDetail());
             },
           ),
         ]),
@@ -87,7 +83,7 @@ class _GroceryListViewState extends State<GroceryListView> {
                   return Dismissible(
                     key: Key(snapshot.data[index].id),
                     background: Container(color: Colors.red),
-                    child: GroceryCard(grocery: snapshot.data[index]),
+                    child: GroceryListGroceryCard(groceryListGrocery: snapshot.data[index]),
                     onDismissed: (direction) {
                       groceries.deleteGroceryListGrocery(snapshot.data[index].id);
                     },
@@ -96,40 +92,12 @@ class _GroceryListViewState extends State<GroceryListView> {
               ));
         },
       ),
-      floatingActionButton: const Stack(
-        children: [
-          Align(
-            alignment: Alignment.bottomRight,
-            child: Padding(
-              padding: EdgeInsets.only(bottom: 65),
-              child: AddFloatingActionButton(child: GroceryDetail()),
-            ),
-          ),
-          Align(
-            alignment: Alignment.bottomRight,
-            child: AddFloatingActionButton(child: GroceryListGroceryDetail()),
-          ),
-        ],
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          showModalBottomSheet(context: context, builder: (context) => GroceryListGroceryDetail());
+        },
+        child: const Icon(Icons.add),
       ),
-    );
-  }
-}
-
-class AddFloatingActionButton extends StatelessWidget {
-  const AddFloatingActionButton({Key? key, required this.child}) : super(key: key);
-
-  final Widget child;
-
-  @override
-  Widget build(BuildContext context) {
-    return FloatingActionButton(
-      onPressed: () {
-        showModalBottomSheet(
-          context: context,
-          builder: (context) => SizedBox(height: 550, child: Wrap(children: [child])),
-        );
-      },
-      child: const Icon(Icons.add),
     );
   }
 }
