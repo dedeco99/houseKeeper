@@ -76,12 +76,13 @@ func (q *Queries) DeleteGroceryListGrocery(ctx context.Context, id uuid.UUID) (G
 const getGroceryListGroceries = `-- name: GetGroceryListGroceries :many
 SELECT
   grocery_list_grocery.id, grocery_list_grocery.active, grocery_list_grocery.grocery_list, grocery_list_grocery.grocery, grocery_list_grocery.quantity, grocery_list_grocery.price, grocery_list_grocery.created,
-  grocery.id AS grocery_id,
+  grocery_list.name AS grocery_list_name,
   grocery.name,
   grocery.category
 FROM
   grocery_list_grocery
   LEFT JOIN grocery ON grocery_list_grocery.grocery = grocery.id
+  LEFT JOIN grocery_list ON grocery_list_grocery.grocery_list = grocery_list.id
 WHERE
   grocery_list_grocery.active = TRUE
   AND grocery_list = $1
@@ -90,16 +91,16 @@ ORDER BY
 `
 
 type GetGroceryListGroceriesRow struct {
-	ID          uuid.UUID      `json:"id"`
-	Active      bool           `json:"active"`
-	GroceryList uuid.UUID      `json:"grocery_list"`
-	Grocery     uuid.UUID      `json:"grocery"`
-	Quantity    int16          `json:"quantity"`
-	Price       string         `json:"price"`
-	Created     time.Time      `json:"created"`
-	GroceryID   uuid.NullUUID  `json:"grocery_id"`
-	Name        sql.NullString `json:"name"`
-	Category    uuid.NullUUID  `json:"category"`
+	ID              uuid.UUID      `json:"id"`
+	Active          bool           `json:"active"`
+	GroceryList     uuid.UUID      `json:"grocery_list"`
+	Grocery         uuid.UUID      `json:"grocery"`
+	Quantity        int16          `json:"quantity"`
+	Price           string         `json:"price"`
+	Created         time.Time      `json:"created"`
+	GroceryListName sql.NullString `json:"grocery_list_name"`
+	Name            sql.NullString `json:"name"`
+	Category        uuid.NullUUID  `json:"category"`
 }
 
 func (q *Queries) GetGroceryListGroceries(ctx context.Context, groceryList uuid.UUID) ([]GetGroceryListGroceriesRow, error) {
@@ -119,7 +120,7 @@ func (q *Queries) GetGroceryListGroceries(ctx context.Context, groceryList uuid.
 			&i.Quantity,
 			&i.Price,
 			&i.Created,
-			&i.GroceryID,
+			&i.GroceryListName,
 			&i.Name,
 			&i.Category,
 		); err != nil {

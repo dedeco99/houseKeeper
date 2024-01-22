@@ -9,14 +9,14 @@ class Groceries {
 
   BehaviorSubject<List<Grocery>> groceriesSubject = BehaviorSubject.seeded([]);
   BehaviorSubject<List<GroceryList>> groceryListsSubject = BehaviorSubject.seeded([]);
-  BehaviorSubject groceryListGroceriesSubject = BehaviorSubject.seeded([]);
+  BehaviorSubject<List<GroceryListGrocery>> groceryListGroceriesSubject = BehaviorSubject.seeded([]);
 
   Stream<List<Grocery>> get groceries$ => groceriesSubject.stream;
   List<Grocery> get groceries => groceriesSubject.value;
   Stream<List<GroceryList>> get groceryLists$ => groceryListsSubject.stream;
   List<GroceryList> get groceryLists => groceryListsSubject.value;
-  Stream get groceryListGroceries$ => groceryListGroceriesSubject.stream;
-  List get groceryListGroceries => groceryListGroceriesSubject.value;
+  Stream<List<GroceryListGrocery>> get groceryListGroceries$ => groceryListGroceriesSubject.stream;
+  List<GroceryListGrocery> get groceryListGroceries => groceryListGroceriesSubject.value;
 
   String? currentGroceryList;
 
@@ -146,9 +146,10 @@ class Groceries {
           var grocery = json["data"][i];
 
           groceryListGroceries.add(
-            Grocery(
-              id: grocery["grocery_id"],
-              name: grocery["name"]["String"],
+            GroceryListGrocery(
+              id: grocery["id"],
+              groceryList: GroceryList(id: grocery["grocery_list"], name: grocery["grocery_list_name"]["String"]),
+              grocery: Grocery(id: grocery["grocery"], name: grocery["name"]["String"]),
               price: int.parse(grocery["price"]),
               quantity: grocery["quantity"],
             ),

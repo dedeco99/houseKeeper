@@ -1,12 +1,13 @@
 -- name: GetGroceryListGroceries :many
 SELECT
   grocery_list_grocery.*,
-  grocery.id AS grocery_id,
+  grocery_list.name AS grocery_list_name,
   grocery.name,
   grocery.category
 FROM
   grocery_list_grocery
   LEFT JOIN grocery ON grocery_list_grocery.grocery = grocery.id
+  LEFT JOIN grocery_list ON grocery_list_grocery.grocery_list = grocery_list.id
 WHERE
   grocery_list_grocery.active = TRUE
   AND grocery_list = $1
