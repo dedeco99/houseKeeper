@@ -40,7 +40,7 @@ func (server *Server) getGroceryListGroceries(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, response("GET_GROCERY_LIST_GROCERIES", groceryListGroceries))
 }
 
-type createGroceryListGroceryRequest struct {
+type addGroceryListGroceryRequest struct {
 	ID string `uri:"id" binding:"required"`
 
 	Data struct {
@@ -50,8 +50,8 @@ type createGroceryListGroceryRequest struct {
 	}
 }
 
-func (server *Server) createGroceryListGrocery(ctx *gin.Context) {
-	var req createGroceryListGroceryRequest
+func (server *Server) addGroceryListGrocery(ctx *gin.Context) {
+	var req addGroceryListGroceryRequest
 
 	if err := ctx.ShouldBindUri(&req); err != nil {
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
@@ -78,14 +78,14 @@ func (server *Server) createGroceryListGrocery(ctx *gin.Context) {
 		price = req.Data.Price
 	}
 
-	arg := db.CreateGroceryListGroceryParams{
+	arg := db.AddGroceryListGroceryParams{
 		GroceryList: listUUID,
 		Grocery:     groceryUUID,
 		Quantity:    int16(req.Data.Quantity),
 		Price:       price,
 	}
 
-	groceryListGrocery, err := server.store.CreateGroceryListGrocery(ctx, arg)
+	groceryListGrocery, err := server.store.AddGroceryListGrocery(ctx, arg)
 
 	if err != nil {
 		if strings.Contains(err.Error(), "duplicate key") {
@@ -111,8 +111,7 @@ func (server *Server) createGroceryListGrocery(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusCreated, response("CREATE_GROCERY_LIST_GROCERY", groceryListGrocery))
-
+	ctx.JSON(http.StatusCreated, response("ADD_GROCERY_LIST_GROCERY", groceryListGrocery))
 }
 
 type deleteGroceryListGroceryRequest struct {

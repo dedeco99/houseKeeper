@@ -17,12 +17,12 @@ func (server *Server) getGroceryLists(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, response("GET_GROCERY_LISTS", groceryLists))
 }
 
-type createGroceryListRequest struct {
+type addGroceryListRequest struct {
 	Name string `json:"name" binding:"required"`
 }
 
-func (server *Server) createGroceryList(ctx *gin.Context) {
-	var req createGroceryListRequest
+func (server *Server) addGroceryList(ctx *gin.Context) {
+	var req addGroceryListRequest
 
 	if err := ctx.ShouldBindJSON(&req); err != nil {
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
@@ -30,12 +30,12 @@ func (server *Server) createGroceryList(ctx *gin.Context) {
 		return
 	}
 
-	groceryList, err := server.store.CreateGroceryList(ctx, req.Name)
+	groceryList, err := server.store.AddGroceryList(ctx, req.Name)
 
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
 
-	ctx.JSON(http.StatusCreated, response("CREATE_GROCERY_LIST", groceryList))
+	ctx.JSON(http.StatusCreated, response("ADD_GROCERY_LIST", groceryList))
 }

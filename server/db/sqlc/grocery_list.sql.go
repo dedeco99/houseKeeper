@@ -11,15 +11,15 @@ import (
 	"github.com/google/uuid"
 )
 
-const createGroceryList = `-- name: CreateGroceryList :one
+const addGroceryList = `-- name: AddGroceryList :one
 INSERT INTO grocery_list(name)
   VALUES ($1)
 RETURNING
   id, active, name, created
 `
 
-func (q *Queries) CreateGroceryList(ctx context.Context, name string) (GroceryList, error) {
-	row := q.db.QueryRowContext(ctx, createGroceryList, name)
+func (q *Queries) AddGroceryList(ctx context.Context, name string) (GroceryList, error) {
+	row := q.db.QueryRowContext(ctx, addGroceryList, name)
 	var i GroceryList
 	err := row.Scan(
 		&i.ID,

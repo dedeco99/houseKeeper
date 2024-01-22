@@ -8,7 +8,7 @@ WHERE
 ORDER BY
   created DESC;
 
--- name: CreateGroceryList :one
+-- name: AddGroceryList :one
 INSERT INTO grocery_list(name)
   VALUES ($1)
 RETURNING

@@ -14,7 +14,7 @@ WHERE
 ORDER BY
   grocery_list_grocery.created DESC;
 
--- name: CreateGroceryListGrocery :one
+-- name: AddGroceryListGrocery :one
 INSERT INTO grocery_list_grocery(grocery_list, grocery, quantity, price)
   VALUES ($1, $2, $3, $4)
 RETURNING

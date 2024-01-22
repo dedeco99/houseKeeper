@@ -13,22 +13,22 @@ import (
 	"github.com/google/uuid"
 )
 
-const createGroceryListGrocery = `-- name: CreateGroceryListGrocery :one
+const addGroceryListGrocery = `-- name: AddGroceryListGrocery :one
 INSERT INTO grocery_list_grocery(grocery_list, grocery, quantity, price)
   VALUES ($1, $2, $3, $4)
 RETURNING
   id, active, grocery_list, grocery, quantity, price, created
 `
 
-type CreateGroceryListGroceryParams struct {
+type AddGroceryListGroceryParams struct {
 	GroceryList uuid.UUID `json:"grocery_list"`
 	Grocery     uuid.UUID `json:"grocery"`
 	Quantity    int16     `json:"quantity"`
 	Price       string    `json:"price"`
 }
 
-func (q *Queries) CreateGroceryListGrocery(ctx context.Context, arg CreateGroceryListGroceryParams) (GroceryListGrocery, error) {
-	row := q.db.QueryRowContext(ctx, createGroceryListGrocery,
+func (q *Queries) AddGroceryListGrocery(ctx context.Context, arg AddGroceryListGroceryParams) (GroceryListGrocery, error) {
+	row := q.db.QueryRowContext(ctx, addGroceryListGrocery,
 		arg.GroceryList,
 		arg.Grocery,
 		arg.Quantity,
