@@ -51,56 +51,64 @@ class _GroceryListGroceryDetailState extends State<GroceryListGroceryDetail> {
         child: Column(
           children: [
             Padding(
-              padding: const EdgeInsets.fromLTRB(8, 35, 8, 8),
-              child: StreamBuilder(
-                stream: groceries.groceryLists$,
-                builder: (BuildContext context, AsyncSnapshot snapshot) {
-                  switch (snapshot.connectionState) {
-                    case ConnectionState.active:
-                      final groceryLists = snapshot.data as List<GroceryList>;
+              padding: widget.groceryListGrocery == null
+                  ? const EdgeInsets.all(0)
+                  : const EdgeInsets.fromLTRB(8, 35, 8, 8),
+              child: widget.groceryListGrocery != null
+                  ? StreamBuilder(
+                      stream: groceries.groceryLists$,
+                      builder: (BuildContext context, AsyncSnapshot snapshot) {
+                        switch (snapshot.connectionState) {
+                          case ConnectionState.active:
+                            final groceryLists = snapshot.data as List<GroceryList>;
 
-                      return DropdownButton(
-                        value: _groceryList,
-                        icon: const Icon(Icons.arrow_downward),
-                        elevation: 16,
-                        onChanged: (GroceryList? value) {
-                          setState(() => _groceryList = value);
-                        },
-                        items: groceryLists.map((GroceryList value) {
-                          return DropdownMenuItem(value: value, child: Text(value.name));
-                        }).toList(),
-                      );
-                    default:
-                      return const Text("Loading");
-                  }
-                },
-              ),
+                            return DropdownButton(
+                              value: _groceryList,
+                              icon: const Icon(Icons.arrow_downward),
+                              elevation: 16,
+                              onChanged: (GroceryList? value) {
+                                setState(() => _groceryList = value);
+                              },
+                              items: groceryLists.map((GroceryList value) {
+                                return DropdownMenuItem(value: value, child: Text(value.name));
+                              }).toList(),
+                            );
+                          default:
+                            return const Text("Loading");
+                        }
+                      },
+                    )
+                  : null,
             ),
             Padding(
-              padding: const EdgeInsets.fromLTRB(8, 35, 8, 8),
-              child: StreamBuilder(
-                stream: groceries.groceries$,
-                builder: (BuildContext context, AsyncSnapshot snapshot) {
-                  switch (snapshot.connectionState) {
-                    case ConnectionState.active:
-                      final groceries = snapshot.data as List<Grocery>;
+              padding: widget.groceryListGrocery == null
+                  ? const EdgeInsets.fromLTRB(8, 35, 8, 8)
+                  : const EdgeInsets.all(0),
+              child: widget.groceryListGrocery == null
+                  ? StreamBuilder(
+                      stream: groceries.groceries$,
+                      builder: (BuildContext context, AsyncSnapshot snapshot) {
+                        switch (snapshot.connectionState) {
+                          case ConnectionState.active:
+                            final groceries = snapshot.data as List<Grocery>;
 
-                      return DropdownButton(
-                        value: _grocery,
-                        icon: const Icon(Icons.arrow_downward),
-                        elevation: 16,
-                        onChanged: (Grocery? value) {
-                          setState(() => _grocery = value);
-                        },
-                        items: groceries.map((Grocery value) {
-                          return DropdownMenuItem(value: value, child: Text(value.name));
-                        }).toList(),
-                      );
-                    default:
-                      return const Text("Loading");
-                  }
-                },
-              ),
+                            return DropdownButton(
+                              value: _grocery,
+                              icon: const Icon(Icons.arrow_downward),
+                              elevation: 16,
+                              onChanged: (Grocery? value) {
+                                setState(() => _grocery = value);
+                              },
+                              items: groceries.map((Grocery value) {
+                                return DropdownMenuItem(value: value, child: Text(value.name));
+                              }).toList(),
+                            );
+                          default:
+                            return const Text("Loading");
+                        }
+                      },
+                    )
+                  : null,
             ),
             Padding(
               padding: const EdgeInsets.all(8),

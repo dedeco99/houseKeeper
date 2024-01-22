@@ -89,22 +89,7 @@ func (server *Server) addGroceryListGrocery(ctx *gin.Context) {
 
 	if err != nil {
 		if strings.Contains(err.Error(), "duplicate key") {
-			arg := db.EditGroceryListGroceryParams{
-				ID:          groceryUUID,
-				GroceryList: groceryListUUID,
-				Quantity:    int16(req.Data.Quantity),
-				Price:       price,
-			}
-
-			groceryListGrocery, err := server.store.EditGroceryListGrocery(ctx, arg)
-
-			if err != nil {
-				ctx.JSON(http.StatusInternalServerError, errorResponse(err))
-			} else {
-				ctx.JSON(http.StatusOK, response("EDIT_GROCERY_LIST_GROCERY", groceryListGrocery))
-			}
-
-			return
+			ctx.JSON(http.StatusConflict, errorResponse(err))
 		} else {
 			ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		}
