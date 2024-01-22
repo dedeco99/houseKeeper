@@ -3,7 +3,7 @@ import "package:get_it/get_it.dart";
 import "package:pull_to_refresh/pull_to_refresh.dart";
 import "package:flutter_slidable/flutter_slidable.dart";
 
-import "package:housekeeper/components/grocery_list_grocery_card.dart";
+import "package:housekeeper/components/grocery_card.dart";
 import "package:housekeeper/components/grocery_list_detail.dart";
 import "package:housekeeper/components/grocery_list_grocery_detail.dart";
 
@@ -65,6 +65,13 @@ class _GroceryListViewState extends State<GroceryListView> {
               showModalBottomSheet(context: context, builder: (context) => const GroceryListDetail());
             },
           ),
+          const Spacer(),
+          IconButton(
+            icon: const Icon(Icons.list),
+            onPressed: () {
+              Navigator.pushNamed(context, "/groceries");
+            },
+          ),
         ]),
         elevation: 0,
       ),
@@ -112,7 +119,7 @@ class _GroceryListViewState extends State<GroceryListView> {
                       ),
                     ],
                   ),
-                  child: GroceryListGroceryCard(groceryListGrocery: grocery),
+                  child: GroceryCard(groceryListGrocery: grocery),
                 );
               },
             ),
@@ -121,7 +128,7 @@ class _GroceryListViewState extends State<GroceryListView> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          showModalBottomSheet(context: context, builder: (context) => GroceryListGroceryDetail());
+          showModalBottomSheet(context: context, builder: (context) => const GroceryListGroceryDetail());
         },
         child: const Icon(Icons.add),
       ),

@@ -60,6 +60,29 @@ class Groceries {
     }
   }
 
+  Future<void> deleteGrocery(Grocery grocery) async {
+    try {
+      Response response = await delete(
+        Uri(
+          scheme: "http",
+          host: host,
+          port: 5001,
+          path: "/api/groceries/${grocery.id}",
+        ),
+      );
+
+      Map json = jsonDecode(response.body);
+
+      if (response.statusCode != 200) throw json["message"];
+
+      groceryListGroceries.removeWhere((g) => g.id == json["data"]["id"]);
+
+      groceryListGroceriesSubject.add(groceryListGroceries);
+    } catch (err) {
+      print("error $err");
+    }
+  }
+
   Future<void> getGroceryLists() async {
     try {
       Response response = await get(
@@ -150,7 +173,7 @@ class Groceries {
               id: grocery["id"],
               groceryList: GroceryList(id: grocery["grocery_list"], name: grocery["grocery_list_name"]["String"]),
               grocery: Grocery(id: grocery["grocery"], name: grocery["name"]["String"]),
-              price: int.parse(grocery["price"]),
+              price: num.parse(grocery["price"]),
               quantity: grocery["quantity"],
             ),
           );
@@ -180,7 +203,7 @@ class Groceries {
 
       Map json = jsonDecode(response.body);
 
-      if (response.statusCode != 201 && response.statusCode != 200) throw json["message"];
+      if (response.statusCode != 201) throw json["message"];
 
       getGroceryListGroceries(currentGroceryList!);
     } catch (err) {
@@ -212,7 +235,7 @@ class Groceries {
 
       if (response.statusCode != 200) throw json["message"];
 
-      getGroceryListGroceries(currentGroceryList!);
+      await getGroceryListGroceries(currentGroceryList!);
     } catch (err) {
       print("error $err");
     }
@@ -233,9 +256,7 @@ class Groceries {
 
       if (response.statusCode != 200) throw json["message"];
 
-      var grocery = json["data"];
-
-      groceryListGroceries.removeWhere((g) => g.id == grocery["id"]);
+      groceryListGroceries.removeWhere((g) => g.id == json["data"]["id"]);
 
       groceryListGroceriesSubject.add(groceryListGroceries);
     } catch (err) {
