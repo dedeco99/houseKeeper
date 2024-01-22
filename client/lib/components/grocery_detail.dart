@@ -17,14 +17,20 @@ class _GroceryDetailState extends State<GroceryDetail> {
   Groceries groceries = GetIt.instance.get<Groceries>();
 
   late final TextEditingController _name;
-  late final TextEditingController _quantity;
-  late final TextEditingController _price;
+  late final TextEditingController _defaultQuantity;
+  late final TextEditingController _defaultPrice;
 
   @override
   void initState() {
     _name = TextEditingController();
-    _quantity = TextEditingController();
-    _price = TextEditingController();
+    _defaultQuantity = TextEditingController();
+    _defaultPrice = TextEditingController();
+
+    if (widget.grocery != null) {
+      _name.text = widget.grocery!.name;
+      _defaultQuantity.text = widget.grocery!.defaultQuantity.toString();
+      _defaultPrice.text = widget.grocery!.defaultPrice.toString();
+    }
 
     super.initState();
   }
@@ -32,8 +38,8 @@ class _GroceryDetailState extends State<GroceryDetail> {
   @override
   void dispose() {
     _name.dispose();
-    _quantity.dispose();
-    _price.dispose();
+    _defaultQuantity.dispose();
+    _defaultPrice.dispose();
 
     super.dispose();
   }
@@ -54,7 +60,7 @@ class _GroceryDetailState extends State<GroceryDetail> {
             Padding(
               padding: const EdgeInsets.all(8),
               child: TextFormField(
-                controller: _quantity,
+                controller: _defaultQuantity,
                 keyboardType: TextInputType.number,
                 decoration: const InputDecoration(border: OutlineInputBorder(), labelText: "Quantity"),
               ),
@@ -62,7 +68,7 @@ class _GroceryDetailState extends State<GroceryDetail> {
             Padding(
               padding: const EdgeInsets.all(8),
               child: TextFormField(
-                controller: _price,
+                controller: _defaultPrice,
                 keyboardType: TextInputType.number,
                 decoration: const InputDecoration(border: OutlineInputBorder(), labelText: "Price"),
               ),
@@ -71,7 +77,18 @@ class _GroceryDetailState extends State<GroceryDetail> {
               padding: const EdgeInsets.all(8),
               child: TextButton(
                 onPressed: () async {
-                  await groceries.addGrocery(_name.text, int.parse(_quantity.text), _price.text);
+                  if (_name.text == "") return;
+
+                  if (widget.grocery == null) {
+                    await groceries.addGrocery(_name.text, int.parse(_defaultQuantity.text), _defaultPrice.text);
+                  } else {
+                    await groceries.editGrocery(
+                      widget.grocery!,
+                      _name.text,
+                      int.parse(_defaultQuantity.text),
+                      _defaultPrice.text,
+                    );
+                  }
 
                   Navigator.of(context).pop();
                 },

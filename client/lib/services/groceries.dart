@@ -51,7 +51,12 @@ class Groceries {
       for (var i = 0; i < json["data"].length; i++) {
         var grocery = json["data"][i];
 
-        groceries.add(Grocery(id: grocery["id"], name: grocery["name"]));
+        groceries.add(Grocery(
+          id: grocery["id"],
+          name: grocery["name"],
+          defaultQuantity: grocery["default_quantity"],
+          defaultPrice: num.parse(grocery["default_price"]),
+        ));
       }
 
       groceriesSubject.add(groceries);
@@ -92,6 +97,31 @@ class Groceries {
       );
 
       groceriesSubject.add(groceries);
+    } catch (err) {
+      print("error $err");
+    }
+  }
+
+  Future<void> editGrocery(Grocery grocery, String name, int defaultQuantity, String defaultPrice) async {
+    try {
+      Response response = await put(
+        Uri(
+          scheme: "http",
+          host: host,
+          port: 5001,
+          path: "/api/groceries/${grocery.id}",
+        ),
+        headers: <String, String>{
+          "Content-Type": "application/json; charset=UTF-8",
+        },
+        body: jsonEncode({"name": name, "defaultQuantity": defaultQuantity, "defaultPrice": defaultPrice}),
+      );
+      print(jsonEncode({"name": name, "defaultQuantity": defaultQuantity, "defaultPrice": defaultPrice}));
+      Map json = jsonDecode(response.body);
+
+      if (response.statusCode != 200) throw json["message"];
+
+      getGroceryListGroceries(currentGroceryList!);
     } catch (err) {
       print("error $err");
     }

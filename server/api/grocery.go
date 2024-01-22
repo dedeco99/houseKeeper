@@ -61,7 +61,7 @@ type editGroceryRequest struct {
 	ID string `uri:"id" binding:"required"`
 
 	Data struct {
-		Name            string `json:"groceryList"`
+		Name            string `json:"name"`
 		DefaultQuantity int    `json:"defaultQuantity"`
 		DefaultPrice    string `json:"defaultPrice"`
 	}
