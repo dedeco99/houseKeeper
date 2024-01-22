@@ -65,7 +65,7 @@ func (server *Server) addGroceryListGrocery(ctx *gin.Context) {
 		return
 	}
 
-	listUUID, err := uuid.Parse(req.ID)
+	groceryListUUID, err := uuid.Parse(req.ID)
 	groceryUUID, err2 := uuid.Parse(req.Data.Grocery)
 
 	if err != nil || err2 != nil {
@@ -79,7 +79,7 @@ func (server *Server) addGroceryListGrocery(ctx *gin.Context) {
 	}
 
 	arg := db.AddGroceryListGroceryParams{
-		GroceryList: listUUID,
+		GroceryList: groceryListUUID,
 		Grocery:     groceryUUID,
 		Quantity:    int16(req.Data.Quantity),
 		Price:       price,
@@ -89,18 +89,19 @@ func (server *Server) addGroceryListGrocery(ctx *gin.Context) {
 
 	if err != nil {
 		if strings.Contains(err.Error(), "duplicate key") {
-			arg := db.UpdateGroceryListGroceryParams{
-				Grocery:  groceryUUID,
-				Quantity: int16(req.Data.Quantity),
-				Price:    price,
+			arg := db.EditGroceryListGroceryParams{
+				ID:          groceryUUID,
+				GroceryList: groceryListUUID,
+				Quantity:    int16(req.Data.Quantity),
+				Price:       price,
 			}
 
-			groceryListGrocery, err := server.store.UpdateGroceryListGrocery(ctx, arg)
+			groceryListGrocery, err := server.store.EditGroceryListGrocery(ctx, arg)
 
 			if err != nil {
 				ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 			} else {
-				ctx.JSON(http.StatusOK, response("UPDATE_GROCERY_LIST_GROCERY", groceryListGrocery))
+				ctx.JSON(http.StatusOK, response("EDIT_GROCERY_LIST_GROCERY", groceryListGrocery))
 			}
 
 			return
@@ -112,6 +113,62 @@ func (server *Server) addGroceryListGrocery(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusCreated, response("ADD_GROCERY_LIST_GROCERY", groceryListGrocery))
+}
+
+type editGroceryListGroceryRequest struct {
+	ID string `uri:"id" binding:"required"`
+
+	Data struct {
+		GroceryList string `json:"groceryList"`
+		Quantity    int    `json:"quantity"`
+		Price       string `json:"price"`
+	}
+}
+
+func (server *Server) editGroceryListGrocery(ctx *gin.Context) {
+	var req editGroceryListGroceryRequest
+
+	if err := ctx.ShouldBindUri(&req); err != nil {
+		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+
+		return
+	}
+
+	if err := ctx.ShouldBindJSON(&req.Data); err != nil {
+		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+
+		return
+	}
+
+	groceryListGroceryUUID, err := uuid.Parse(req.ID)
+	groceryListUUID, err2 := uuid.Parse(req.Data.GroceryList)
+
+	if err != nil || err2 != nil {
+		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+		return
+	}
+
+	var price = "0"
+	if req.Data.Price != "" {
+		price = req.Data.Price
+	}
+
+	arg := db.EditGroceryListGroceryParams{
+		ID:          groceryListGroceryUUID,
+		GroceryList: groceryListUUID,
+		Quantity:    int16(req.Data.Quantity),
+		Price:       price,
+	}
+
+	groceryListGrocery, err := server.store.EditGroceryListGrocery(ctx, arg)
+
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+
+		return
+	}
+
+	ctx.JSON(http.StatusOK, response("EDIT_GROCERY_LIST_GROCERY", groceryListGrocery))
 }
 
 type deleteGroceryListGroceryRequest struct {

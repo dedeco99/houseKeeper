@@ -188,6 +188,36 @@ class Groceries {
     }
   }
 
+  Future<void> editGroceryListGrocery(
+    GroceryListGrocery groceryListGrocery,
+    GroceryList groceryList,
+    int quantity,
+    String price,
+  ) async {
+    try {
+      Response response = await put(
+        Uri(
+          scheme: "http",
+          host: host,
+          port: 5001,
+          path: "/api/grocery_lists/groceries/${groceryListGrocery.id}",
+        ),
+        headers: <String, String>{
+          "Content-Type": "application/json; charset=UTF-8",
+        },
+        body: jsonEncode({"groceryList": groceryList.id, "quantity": quantity, "price": price}),
+      );
+
+      Map json = jsonDecode(response.body);
+
+      if (response.statusCode != 200) throw json["message"];
+
+      getGroceryListGroceries(currentGroceryList!);
+    } catch (err) {
+      print("error $err");
+    }
+  }
+
   Future<void> deleteGroceryListGrocery(GroceryListGrocery groceryListGrocery) async {
     try {
       Response response = await delete(

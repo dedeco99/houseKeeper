@@ -20,14 +20,16 @@ INSERT INTO grocery_list_grocery(grocery_list, grocery, quantity, price)
 RETURNING
   *;
 
--- name: UpdateGroceryListGrocery :one
+-- name: EditGroceryListGrocery :one
 UPDATE
   grocery_list_grocery
 SET
-  quantity = $2,
-  price = $3
+  grocery_list = $2,
+  quantity = $3,
+  price = $4
 WHERE
-  grocery = $1
+  id = $1
+  OR grocery = $1
 RETURNING
   *;
 

@@ -73,6 +73,47 @@ func (q *Queries) DeleteGroceryListGrocery(ctx context.Context, id uuid.UUID) (G
 	return i, err
 }
 
+const editGroceryListGrocery = `-- name: EditGroceryListGrocery :one
+UPDATE
+  grocery_list_grocery
+SET
+  grocery_list = $2,
+  quantity = $3,
+  price = $4
+WHERE
+  id = $1
+  OR grocery = $1
+RETURNING
+  id, active, grocery_list, grocery, quantity, price, created
+`
+
+type EditGroceryListGroceryParams struct {
+	ID          uuid.UUID `json:"id"`
+	GroceryList uuid.UUID `json:"grocery_list"`
+	Quantity    int16     `json:"quantity"`
+	Price       string    `json:"price"`
+}
+
+func (q *Queries) EditGroceryListGrocery(ctx context.Context, arg EditGroceryListGroceryParams) (GroceryListGrocery, error) {
+	row := q.db.QueryRowContext(ctx, editGroceryListGrocery,
+		arg.ID,
+		arg.GroceryList,
+		arg.Quantity,
+		arg.Price,
+	)
+	var i GroceryListGrocery
+	err := row.Scan(
+		&i.ID,
+		&i.Active,
+		&i.GroceryList,
+		&i.Grocery,
+		&i.Quantity,
+		&i.Price,
+		&i.Created,
+	)
+	return i, err
+}
+
 const getGroceryListGroceries = `-- name: GetGroceryListGroceries :many
 SELECT
   grocery_list_grocery.id, grocery_list_grocery.active, grocery_list_grocery.grocery_list, grocery_list_grocery.grocery, grocery_list_grocery.quantity, grocery_list_grocery.price, grocery_list_grocery.created,
@@ -135,37 +176,4 @@ func (q *Queries) GetGroceryListGroceries(ctx context.Context, groceryList uuid.
 		return nil, err
 	}
 	return items, nil
-}
-
-const updateGroceryListGrocery = `-- name: UpdateGroceryListGrocery :one
-UPDATE
-  grocery_list_grocery
-SET
-  quantity = $2,
-  price = $3
-WHERE
-  grocery = $1
-RETURNING
-  id, active, grocery_list, grocery, quantity, price, created
-`
-
-type UpdateGroceryListGroceryParams struct {
-	Grocery  uuid.UUID `json:"grocery"`
-	Quantity int16     `json:"quantity"`
-	Price    string    `json:"price"`
-}
-
-func (q *Queries) UpdateGroceryListGrocery(ctx context.Context, arg UpdateGroceryListGroceryParams) (GroceryListGrocery, error) {
-	row := q.db.QueryRowContext(ctx, updateGroceryListGrocery, arg.Grocery, arg.Quantity, arg.Price)
-	var i GroceryListGrocery
-	err := row.Scan(
-		&i.ID,
-		&i.Active,
-		&i.GroceryList,
-		&i.Grocery,
-		&i.Quantity,
-		&i.Price,
-		&i.Created,
-	)
-	return i, err
 }
