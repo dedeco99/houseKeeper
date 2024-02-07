@@ -62,16 +62,29 @@ class _GroceryListGroceryDetailState extends State<GroceryListGroceryDetail> {
                           case ConnectionState.active:
                             final groceryLists = snapshot.data as List<GroceryList>;
 
-                            return DropdownButton(
-                              value: _groceryList,
-                              icon: const Icon(Icons.arrow_downward),
-                              elevation: 16,
-                              onChanged: (GroceryList? value) {
-                                setState(() => _groceryList = value);
+                            return Autocomplete<GroceryList>(
+                              fieldViewBuilder: (context, textEditingController, focusNode, onFieldSubmitted) {
+                                return TextField(
+                                  decoration: const InputDecoration(
+                                    border: OutlineInputBorder(),
+                                    label: Text("Grocery List"),
+                                  ),
+                                  controller: textEditingController,
+                                  focusNode: focusNode,
+                                );
                               },
-                              items: groceryLists.map((GroceryList value) {
-                                return DropdownMenuItem(value: value, child: Text(value.name));
-                              }).toList(),
+                              optionsBuilder: (textEditingValue) {
+                                if (textEditingValue.text == "") return groceryLists;
+
+                                return groceryLists.where((option) {
+                                  return option.name.toString().contains(textEditingValue.text.toLowerCase());
+                                });
+                              },
+                              displayStringForOption: (option) => option.name,
+                              initialValue: TextEditingValue(text: widget.groceryListGrocery!.groceryList.name),
+                              onSelected: (option) {
+                                setState(() => _groceryList = option);
+                              },
                             );
                           default:
                             return const Text("Loading");
@@ -92,16 +105,28 @@ class _GroceryListGroceryDetailState extends State<GroceryListGroceryDetail> {
                           case ConnectionState.active:
                             final groceries = snapshot.data as List<Grocery>;
 
-                            return DropdownButton(
-                              value: _grocery,
-                              icon: const Icon(Icons.arrow_downward),
-                              elevation: 16,
-                              onChanged: (Grocery? value) {
-                                setState(() => _grocery = value);
+                            return Autocomplete<Grocery>(
+                              fieldViewBuilder: (context, textEditingController, focusNode, onFieldSubmitted) {
+                                return TextField(
+                                  decoration: const InputDecoration(
+                                    border: OutlineInputBorder(),
+                                    label: Text("Grocery"),
+                                  ),
+                                  controller: textEditingController,
+                                  focusNode: focusNode,
+                                );
                               },
-                              items: groceries.map((Grocery value) {
-                                return DropdownMenuItem(value: value, child: Text(value.name));
-                              }).toList(),
+                              optionsBuilder: (textEditingValue) {
+                                if (textEditingValue.text == "") return groceries;
+
+                                return groceries.where((option) {
+                                  return option.name.toString().contains(textEditingValue.text.toLowerCase());
+                                });
+                              },
+                              displayStringForOption: (option) => option.name,
+                              onSelected: (option) {
+                                setState(() => _grocery = option);
+                              },
                             );
                           default:
                             return const Text("Loading");

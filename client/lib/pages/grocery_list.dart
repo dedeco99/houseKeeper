@@ -21,7 +21,7 @@ class _GroceryListViewState extends State<GroceryListView> {
   Groceries groceries = GetIt.instance.get<Groceries>();
   RefreshController refreshController = RefreshController();
 
-  GroceryList? groceryList;
+  GroceryList? _groceryList;
 
   void onRefresh() async {
     refreshController.refreshCompleted();
@@ -37,22 +37,26 @@ class _GroceryListViewState extends State<GroceryListView> {
             builder: (BuildContext context, AsyncSnapshot snapshot) {
               switch (snapshot.connectionState) {
                 case ConnectionState.active:
-                  final lists = snapshot.data as List<GroceryList>;
+                  final groceryLists = snapshot.data as List<GroceryList>;
 
-                  return DropdownButton(
-                    value: groceryList,
-                    icon: const Icon(Icons.arrow_downward),
-                    elevation: 16,
-                    onChanged: (GroceryList? value) {
+                  return DropdownMenu<GroceryList>(
+                    label: const Text("List"),
+                    inputDecorationTheme: const InputDecorationTheme(
+                      border: OutlineInputBorder(),
+                      contentPadding: EdgeInsets.all(10),
+                      constraints: BoxConstraints(maxHeight: 45),
+                    ),
+                    initialSelection: _groceryList,
+                    dropdownMenuEntries: groceryLists.map((value) {
+                      return DropdownMenuEntry(value: value, label: value.name);
+                    }).toList(),
+                    onSelected: (value) {
                       if (value != null) {
-                        setState(() => groceryList = value);
+                        setState(() => _groceryList = value);
 
                         groceries.getGroceryListGroceries(value);
                       }
                     },
-                    items: lists.map((GroceryList value) {
-                      return DropdownMenuItem(value: value, child: Text(value.name));
-                    }).toList(),
                   );
                 default:
                   return const Text("Loading");
