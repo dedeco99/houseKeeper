@@ -9,7 +9,7 @@ import "package:housekeeper/services/groceries.dart";
 import "package:housekeeper/services/grocery.dart";
 
 class GroceriesView extends StatefulWidget {
-  const GroceriesView({Key? key}) : super(key: key);
+  const GroceriesView({super.key});
 
   @override
   _GroceriesViewState createState() => _GroceriesViewState();

@@ -12,7 +12,7 @@ class GroceryCard extends StatefulWidget {
   final Grocery? grocery;
   final GroceryListGrocery? groceryListGrocery;
 
-  const GroceryCard({Key? key, this.grocery, this.groceryListGrocery}) : super(key: key);
+  const GroceryCard({super.key, this.grocery, this.groceryListGrocery});
 
   @override
   _GroceryCardState createState() => _GroceryCardState();
