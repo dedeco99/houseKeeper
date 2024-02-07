@@ -31,18 +31,8 @@ class _GroceryCardState extends State<GroceryCard> {
   @override
   void initState() {
     if (widget.grocery != null) {
-      _grocery = widget.grocery;
-      _name = widget.grocery!.name;
-      _quantity = widget.grocery!.defaultQuantity;
-      _price = widget.grocery!.defaultPrice;
-      _detail = GroceryDetail(grocery: _grocery);
       _deleteFunction = groceries.deleteGrocery;
     } else {
-      _grocery = widget.groceryListGrocery;
-      _name = widget.groceryListGrocery!.grocery.name;
-      _quantity = widget.groceryListGrocery!.quantity;
-      _price = widget.groceryListGrocery!.price;
-      _detail = GroceryListGroceryDetail(groceryListGrocery: _grocery);
       _deleteFunction = groceries.deleteGroceryListGrocery;
     }
 
@@ -51,6 +41,20 @@ class _GroceryCardState extends State<GroceryCard> {
 
   @override
   Widget build(BuildContext context) {
+    if (widget.grocery != null) {
+      _grocery = widget.grocery;
+      _name = widget.grocery!.name;
+      _quantity = widget.grocery!.defaultQuantity;
+      _price = widget.grocery!.defaultPrice;
+      _detail = GroceryDetail(grocery: _grocery);
+    } else {
+      _grocery = widget.groceryListGrocery;
+      _name = widget.groceryListGrocery!.grocery.name;
+      _quantity = widget.groceryListGrocery!.quantity;
+      _price = widget.groceryListGrocery!.price;
+      _detail = GroceryListGroceryDetail(groceryListGrocery: _grocery);
+    }
+
     return GestureDetector(
       onTap: () => showModalBottomSheet(context: context, builder: (context) => _detail!),
       child: Slidable(

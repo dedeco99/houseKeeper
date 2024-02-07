@@ -98,6 +98,8 @@ func (server *Server) addGroceryListGrocery(ctx *gin.Context) {
 		return
 	}
 
+	// TODO: populate groceryListGrocery.grocery, maybe select query
+
 	ctx.JSON(http.StatusCreated, response("ADD_GROCERY_LIST_GROCERY", groceryListGrocery))
 }
 
@@ -153,6 +155,8 @@ func (server *Server) editGroceryListGrocery(ctx *gin.Context) {
 
 		return
 	}
+
+	// TODO: populate groceryListGrocery.grocery, maybe select query
 
 	ctx.JSON(http.StatusOK, response("EDIT_GROCERY_LIST_GROCERY", groceryListGrocery))
 }

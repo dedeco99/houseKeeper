@@ -33,6 +33,25 @@ class Groceries {
     groceryListSubject.close();
   }
 
+  Grocery getGrocery(dynamic data, bool inGroceryList) {
+    return Grocery(
+      id: inGroceryList ? data["grocery"] : data["id"],
+      name: inGroceryList ? data["name"]["String"] : data["name"],
+      defaultQuantity: data["default_quantity"] ?? 1,
+      defaultPrice: num.parse(data["default_price"] ?? "0"),
+    );
+  }
+
+  GroceryListGrocery getGroceryListGrocery(dynamic data) {
+    return GroceryListGrocery(
+      id: data["id"],
+      groceryList: GroceryList(id: data["grocery_list"], name: data["grocery_list_name"]["String"]),
+      grocery: getGrocery(data, true),
+      price: num.parse(data["price"]),
+      quantity: data["quantity"],
+    );
+  }
+
   Future<void> getGroceries() async {
     try {
       Response response = await get(
@@ -51,14 +70,7 @@ class Groceries {
       groceries.clear();
 
       for (var i = 0; i < json["data"].length; i++) {
-        var grocery = json["data"][i];
-
-        groceries.add(Grocery(
-          id: grocery["id"],
-          name: grocery["name"],
-          defaultQuantity: grocery["default_quantity"],
-          defaultPrice: num.parse(grocery["default_price"]),
-        ));
+        groceries.add(getGrocery(json["data"][i], false));
       }
 
       groceriesSubject.add(groceries);
@@ -86,17 +98,7 @@ class Groceries {
 
       if (response.statusCode != 201) throw json["message"];
 
-      var grocery = json["data"];
-      print(grocery);
-      groceries.insert(
-        0,
-        Grocery(
-          id: grocery["id"],
-          name: grocery["name"],
-          defaultQuantity: grocery["default_quantity"],
-          defaultPrice: num.parse(grocery["default_price"]),
-        ),
-      );
+      groceries.insert(0, getGrocery(json["data"], false));
 
       groceriesSubject.add(groceries);
     } catch (err) {
@@ -118,12 +120,20 @@ class Groceries {
         },
         body: jsonEncode({"name": name, "defaultQuantity": defaultQuantity, "defaultPrice": defaultPrice}),
       );
-      print(jsonEncode({"name": name, "defaultQuantity": defaultQuantity, "defaultPrice": defaultPrice}));
+
       Map json = jsonDecode(response.body);
 
       if (response.statusCode != 200) throw json["message"];
 
-      getGroceryListGroceries(groceryList!);
+      var editedGrocery = getGrocery(json["data"], false);
+
+      groceries[groceries.indexWhere((g) => g.id == editedGrocery.id)] = editedGrocery;
+
+      groceriesSubject.add(groceries);
+
+      bool groceryListHasGrocery = groceryListGroceries.map((g) => g.grocery).contains(grocery);
+
+      if (groceryListHasGrocery) getGroceryListGroceries(groceryList!);
     } catch (err) {
       print("error $err");
     }
@@ -170,9 +180,7 @@ class Groceries {
       groceryLists.clear();
 
       for (var i = 0; i < json["data"].length; i++) {
-        var groceryList = json["data"][i];
-
-        groceryLists.add(GroceryList(id: groceryList["id"], name: groceryList["name"]));
+        groceryLists.add(GroceryList(id: json["data"][i]["id"], name: json["data"][i]["name"]));
       }
 
       groceryListsSubject.add(groceryLists);
@@ -235,17 +243,7 @@ class Groceries {
 
       if (json["data"] != null) {
         for (var i = 0; i < json["data"].length; i++) {
-          var grocery = json["data"][i];
-
-          groceryListGroceries.add(
-            GroceryListGrocery(
-              id: grocery["id"],
-              groceryList: GroceryList(id: grocery["grocery_list"], name: grocery["grocery_list_name"]["String"]),
-              grocery: Grocery(id: grocery["grocery"], name: grocery["name"]["String"]),
-              price: num.parse(grocery["price"]),
-              quantity: grocery["quantity"],
-            ),
-          );
+          groceryListGroceries.add(getGroceryListGrocery(json["data"][i]));
         }
       }
 
@@ -304,7 +302,7 @@ class Groceries {
 
       if (response.statusCode != 200) throw json["message"];
 
-      await getGroceryListGroceries(groceryList);
+      getGroceryListGroceries(groceryList!);
     } catch (err) {
       print("error $err");
     }
