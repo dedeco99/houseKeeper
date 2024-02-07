@@ -2,6 +2,7 @@ import "package:flutter/material.dart";
 import "package:get_it/get_it.dart";
 import "package:pull_to_refresh/pull_to_refresh.dart";
 import "package:flutter_slidable/flutter_slidable.dart";
+import "package:multiple_stream_builder/multiple_stream_builder.dart";
 
 import "package:housekeeper/components/grocery_card.dart";
 import "package:housekeeper/components/grocery_list_detail.dart";
@@ -21,8 +22,6 @@ class _GroceryListViewState extends State<GroceryListView> {
   Groceries groceries = GetIt.instance.get<Groceries>();
   RefreshController refreshController = RefreshController();
 
-  GroceryList? _groceryList;
-
   void onRefresh() async {
     refreshController.refreshCompleted();
   }
@@ -32,12 +31,13 @@ class _GroceryListViewState extends State<GroceryListView> {
     return Scaffold(
       appBar: AppBar(
         title: Row(children: [
-          StreamBuilder(
-            stream: groceries.groceryLists$,
-            builder: (BuildContext context, AsyncSnapshot snapshot) {
-              switch (snapshot.connectionState) {
+          StreamBuilder2<List<GroceryList>, GroceryList?>(
+            streams: StreamTuple2(groceries.groceryLists$, groceries.groceryList$),
+            builder: (context, snapshots) {
+              switch (snapshots.snapshot1.connectionState) {
                 case ConnectionState.active:
-                  final groceryLists = snapshot.data as List<GroceryList>;
+                  final groceryLists = snapshots.snapshot1.data as List<GroceryList>;
+                  final groceryList = snapshots.snapshot2.data;
 
                   return DropdownMenu<GroceryList>(
                     label: const Text("List"),
@@ -46,14 +46,12 @@ class _GroceryListViewState extends State<GroceryListView> {
                       contentPadding: EdgeInsets.all(10),
                       constraints: BoxConstraints(maxHeight: 45),
                     ),
-                    initialSelection: _groceryList,
+                    initialSelection: groceryList,
                     dropdownMenuEntries: groceryLists.map((value) {
                       return DropdownMenuEntry(value: value, label: value.name);
                     }).toList(),
                     onSelected: (value) {
                       if (value != null) {
-                        setState(() => _groceryList = value);
-
                         groceries.getGroceryListGroceries(value);
                       }
                     },

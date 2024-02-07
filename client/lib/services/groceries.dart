@@ -10,6 +10,7 @@ class Groceries {
   BehaviorSubject<List<Grocery>> groceriesSubject = BehaviorSubject.seeded([]);
   BehaviorSubject<List<GroceryList>> groceryListsSubject = BehaviorSubject.seeded([]);
   BehaviorSubject<List<GroceryListGrocery>> groceryListGroceriesSubject = BehaviorSubject.seeded([]);
+  BehaviorSubject<GroceryList?> groceryListSubject = BehaviorSubject.seeded(null);
 
   Stream<List<Grocery>> get groceries$ => groceriesSubject.stream;
   List<Grocery> get groceries => groceriesSubject.value;
@@ -17,8 +18,8 @@ class Groceries {
   List<GroceryList> get groceryLists => groceryListsSubject.value;
   Stream<List<GroceryListGrocery>> get groceryListGroceries$ => groceryListGroceriesSubject.stream;
   List<GroceryListGrocery> get groceryListGroceries => groceryListGroceriesSubject.value;
-
-  GroceryList? currentGroceryList;
+  Stream<GroceryList?> get groceryList$ => groceryListSubject.stream;
+  GroceryList? get groceryList => groceryListSubject.value;
 
   Groceries() {
     getGroceryLists();
@@ -29,6 +30,7 @@ class Groceries {
     groceriesSubject.close();
     groceryListsSubject.close();
     groceryListGroceriesSubject.close();
+    groceryListSubject.close();
   }
 
   Future<void> getGroceries() async {
@@ -121,7 +123,7 @@ class Groceries {
 
       if (response.statusCode != 200) throw json["message"];
 
-      getGroceryListGroceries(currentGroceryList!);
+      getGroceryListGroceries(groceryList!);
     } catch (err) {
       print("error $err");
     }
@@ -200,13 +202,13 @@ class Groceries {
 
       if (response.statusCode != 201) throw json["message"];
 
-      var groceryList = json["data"];
+      var groceryList = GroceryList(id: json["data"]["id"], name: json["data"]["name"]);
 
-      groceryLists.insert(0, GroceryList(id: groceryList["id"], name: groceryList["name"]));
+      groceryLists.insert(0, groceryList);
 
       groceryListsSubject.add(groceryLists);
 
-      currentGroceryList = groceryList["id"];
+      getGroceryListGroceries(groceryList);
     } catch (err) {
       print("error $err");
     }
@@ -214,7 +216,7 @@ class Groceries {
 
   Future<void> getGroceryListGroceries(GroceryList groceryList) async {
     try {
-      currentGroceryList = groceryList;
+      groceryListSubject.add(groceryList);
 
       Response response = await get(
         Uri(
@@ -260,7 +262,7 @@ class Groceries {
           scheme: "http",
           host: host,
           port: 5001,
-          path: "/api/grocery_lists/${currentGroceryList!.id}",
+          path: "/api/grocery_lists/${groceryList!.id}",
         ),
         headers: <String, String>{
           "Content-Type": "application/json; charset=UTF-8",
@@ -272,7 +274,7 @@ class Groceries {
 
       if (response.statusCode != 201) throw json["message"];
 
-      getGroceryListGroceries(currentGroceryList!);
+      getGroceryListGroceries(groceryList!);
     } catch (err) {
       print("error $err");
     }
@@ -302,7 +304,7 @@ class Groceries {
 
       if (response.statusCode != 200) throw json["message"];
 
-      await getGroceryListGroceries(currentGroceryList!);
+      await getGroceryListGroceries(groceryList);
     } catch (err) {
       print("error $err");
     }
