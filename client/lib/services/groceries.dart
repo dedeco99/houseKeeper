@@ -302,7 +302,7 @@ class Groceries {
 
       if (response.statusCode != 200) throw json["message"];
 
-      getGroceryListGroceries(groceryList!);
+      getGroceryListGroceries(groceryList);
     } catch (err) {
       print("error $err");
     }

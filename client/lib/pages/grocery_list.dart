@@ -4,6 +4,7 @@ import "package:pull_to_refresh/pull_to_refresh.dart";
 import "package:flutter_slidable/flutter_slidable.dart";
 import "package:multiple_stream_builder/multiple_stream_builder.dart";
 
+import "package:housekeeper/components/loading.dart";
 import "package:housekeeper/components/grocery_card.dart";
 import "package:housekeeper/components/grocery_list_detail.dart";
 import "package:housekeeper/components/grocery_list_grocery_detail.dart";
@@ -57,7 +58,7 @@ class _GroceryListViewState extends State<GroceryListView> {
                     },
                   );
                 default:
-                  return const Text("Loading");
+                  return const Loading();
               }
             },
           ),
@@ -80,7 +81,7 @@ class _GroceryListViewState extends State<GroceryListView> {
       body: StreamBuilder(
         stream: groceries.groceryListGroceries$,
         builder: (BuildContext context, AsyncSnapshot snapshot) {
-          if (!snapshot.hasData) return const Text("Loading");
+          if (!snapshot.hasData) return const Loading();
 
           return SmartRefresher(
             enablePullDown: true,

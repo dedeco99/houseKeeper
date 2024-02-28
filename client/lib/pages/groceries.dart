@@ -2,6 +2,7 @@ import "package:flutter/material.dart";
 import "package:get_it/get_it.dart";
 import "package:pull_to_refresh/pull_to_refresh.dart";
 
+import "package:housekeeper/components/loading.dart";
 import "package:housekeeper/components/grocery_card.dart";
 import "package:housekeeper/components/grocery_detail.dart";
 
@@ -30,7 +31,7 @@ class _GroceriesViewState extends State<GroceriesView> {
       body: StreamBuilder(
         stream: groceries.groceries$,
         builder: (BuildContext context, AsyncSnapshot snapshot) {
-          if (!snapshot.hasData) return const Text("Loading");
+          if (!snapshot.hasData) return const Loading();
 
           return SmartRefresher(
             enablePullDown: true,

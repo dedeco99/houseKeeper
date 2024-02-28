@@ -19,9 +19,6 @@ void main() {
         seedColor: Colors.blue,
         brightness: Brightness.dark,
       ),
-      textButtonTheme: TextButtonThemeData(
-        style: ButtonStyle(backgroundColor: MaterialStateProperty.all<Color>(Colors.grey.shade800)),
-      ),
     ),
     home: const Home(),
     routes: {

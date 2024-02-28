@@ -1,6 +1,8 @@
 import "package:flutter/material.dart";
 import "package:get_it/get_it.dart";
 
+import "package:housekeeper/components/loading.dart";
+
 import "package:housekeeper/services/groceries.dart";
 import "package:housekeeper/services/grocery.dart";
 
@@ -87,7 +89,7 @@ class _GroceryListGroceryDetailState extends State<GroceryListGroceryDetail> {
                               },
                             );
                           default:
-                            return const Text("Loading");
+                            return const Loading();
                         }
                       },
                     )
@@ -129,7 +131,7 @@ class _GroceryListGroceryDetailState extends State<GroceryListGroceryDetail> {
                               },
                             );
                           default:
-                            return const Text("Loading");
+                            return const Loading();
                         }
                       },
                     )
