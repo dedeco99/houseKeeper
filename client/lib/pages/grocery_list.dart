@@ -83,48 +83,51 @@ class _GroceryListViewState extends State<GroceryListView> {
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           if (!snapshot.hasData) return const Loading();
 
-          return SmartRefresher(
-            enablePullDown: true,
-            header: const WaterDropMaterialHeader(),
-            controller: refreshController,
-            onRefresh: onRefresh,
-            child: ListView.builder(
-              itemCount: snapshot.data.length,
-              itemBuilder: (context, index) {
-                final GroceryListGrocery grocery = snapshot.data[index];
+          return Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 15),
+            child: SmartRefresher(
+              enablePullDown: true,
+              header: const WaterDropMaterialHeader(),
+              controller: refreshController,
+              onRefresh: onRefresh,
+              child: ListView.builder(
+                itemCount: snapshot.data.length,
+                itemBuilder: (context, index) {
+                  final GroceryListGrocery grocery = snapshot.data[index];
 
-                return Slidable(
-                  key: Key(grocery.id),
-                  endActionPane: ActionPane(
-                    motion: const BehindMotion(),
-                    children: [
-                      SlidableAction(
-                        onPressed: (context) => showModalBottomSheet(
-                          context: context,
-                          builder: (context) => GroceryListGroceryDetail(groceryListGrocery: grocery),
+                  return Slidable(
+                    key: Key(grocery.id),
+                    endActionPane: ActionPane(
+                      motion: const BehindMotion(),
+                      children: [
+                        SlidableAction(
+                          onPressed: (context) => showModalBottomSheet(
+                            context: context,
+                            builder: (context) => GroceryListGroceryDetail(groceryListGrocery: grocery),
+                          ),
+                          backgroundColor: Colors.blue,
+                          icon: Icons.edit,
+                          label: "Editar",
                         ),
-                        backgroundColor: Colors.blue,
-                        icon: Icons.edit,
-                        label: "Editar",
-                      ),
-                      SlidableAction(
-                        autoClose: false,
-                        onPressed: (context) async {
-                          await groceries.deleteGroceryListGrocery(grocery);
-                        },
-                        backgroundColor: Colors.red,
-                        icon: Icons.delete,
-                        label: "Apagar",
-                        borderRadius: const BorderRadius.only(
-                          topRight: Radius.circular(5),
-                          bottomRight: Radius.circular(5),
+                        SlidableAction(
+                          autoClose: false,
+                          onPressed: (context) async {
+                            await groceries.deleteGroceryListGrocery(grocery);
+                          },
+                          backgroundColor: Colors.red,
+                          icon: Icons.delete,
+                          label: "Apagar",
+                          borderRadius: const BorderRadius.only(
+                            topRight: Radius.circular(5),
+                            bottomRight: Radius.circular(5),
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                  child: GroceryCard(groceryListGrocery: grocery),
-                );
-              },
+                      ],
+                    ),
+                    child: GroceryCard(groceryListGrocery: grocery),
+                  );
+                },
+              ),
             ),
           );
         },

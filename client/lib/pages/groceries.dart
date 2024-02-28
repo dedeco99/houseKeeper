@@ -33,18 +33,21 @@ class _GroceriesViewState extends State<GroceriesView> {
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           if (!snapshot.hasData) return const Loading();
 
-          return SmartRefresher(
-            enablePullDown: true,
-            header: const WaterDropMaterialHeader(),
-            controller: refreshController,
-            onRefresh: onRefresh,
-            child: ListView.builder(
-              itemCount: snapshot.data.length,
-              itemBuilder: (context, index) {
-                final Grocery grocery = snapshot.data[index];
+          return Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 15),
+            child: SmartRefresher(
+              enablePullDown: true,
+              header: const WaterDropMaterialHeader(),
+              controller: refreshController,
+              onRefresh: onRefresh,
+              child: ListView.builder(
+                itemCount: snapshot.data.length,
+                itemBuilder: (context, index) {
+                  final Grocery grocery = snapshot.data[index];
 
-                return GroceryCard(grocery: grocery);
-              },
+                  return GroceryCard(grocery: grocery);
+                },
+              ),
             ),
           );
         },
