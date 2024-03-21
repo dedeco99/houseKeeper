@@ -1,4 +1,4 @@
-package com.example.housekeeper
+package dev.rabbitsoftware.housekeeper
 
 import io.flutter.embedding.android.FlutterActivity
 

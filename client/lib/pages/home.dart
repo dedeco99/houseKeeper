@@ -1,34 +1,33 @@
-import 'package:flutter/material.dart';
+import "package:flutter/material.dart";
+
+import "package:housekeeper/pages/groceries.dart";
+import "package:housekeeper/pages/grocery_list.dart";
 
 class Home extends StatefulWidget {
+  const Home({super.key});
+
   @override
-  _HomeState createState() => _HomeState();
+  HomeState createState() => HomeState();
 }
 
-class _HomeState extends State<Home> {
-  Map data = {};
+class HomeState extends State<Home> {
+  final List<Widget> _pages = [const GroceryListView(), const GroceriesView()];
+
+  final List<NavigationDestination> _navigationOptions = [
+    const NavigationDestination(icon: Icon(Icons.local_grocery_store_rounded), label: "Grocery List"),
+    const NavigationDestination(icon: Icon(Icons.settings_rounded), label: "Settings"),
+  ];
+  int _selectedIndex = 0;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[900],
-      appBar: AppBar(
-        title: Text("House Keeper"),
-        elevation: 0,
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            TextButton.icon(
-              onPressed: () {
-                Navigator.pushNamed(context, "/groceryList");
-              },
-              icon: Icon(Icons.local_grocery_store),
-              label: Text("Grocery List"),
-            ),
-          ],
-        ),
+      body: Center(child: _pages.elementAt(_selectedIndex)),
+      bottomNavigationBar: NavigationBar(
+        destinations: _navigationOptions,
+        selectedIndex: _selectedIndex,
+        onDestinationSelected: (int index) => setState(() => _selectedIndex = index),
+        height: 65,
       ),
     );
   }
