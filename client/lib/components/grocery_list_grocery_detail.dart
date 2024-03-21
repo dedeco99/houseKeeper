@@ -127,7 +127,11 @@ class _GroceryListGroceryDetailState extends State<GroceryListGroceryDetail> {
                               },
                               displayStringForOption: (option) => option.name,
                               onSelected: (option) {
-                                setState(() => _grocery = option);
+                                setState(() {
+                                  _grocery = option;
+                                  _quantity.text = option.defaultQuantity.toString();
+                                  _price.text = option.defaultPrice.toString();
+                                });
                               },
                             );
                           default:
