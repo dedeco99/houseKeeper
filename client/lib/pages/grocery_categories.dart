@@ -3,8 +3,8 @@ import "package:get_it/get_it.dart";
 import "package:pull_to_refresh/pull_to_refresh.dart";
 
 import "package:housekeeper/components/loading.dart";
-import "package:housekeeper/components/grocery_card.dart";
-import "package:housekeeper/components/grocery_detail.dart";
+import "package:housekeeper/components/grocery_category_card.dart";
+import "package:housekeeper/components/grocery_category_detail.dart";
 
 import "package:housekeeper/services/groceries.dart";
 import "package:housekeeper/services/grocery.dart";
@@ -43,9 +43,9 @@ class _GroceryCategoriesViewState extends State<GroceryCategoriesView> {
               child: ListView.builder(
                 itemCount: snapshot.data.length,
                 itemBuilder: (context, index) {
-                  final Grocery grocery = snapshot.data[index];
+                  final GroceryCategory groceryCategory = snapshot.data[index];
 
-                  return GroceryCard(grocery: grocery);
+                  return GroceryCategoryCard(groceryCategory: groceryCategory);
                 },
               ),
             ),
@@ -54,7 +54,7 @@ class _GroceryCategoriesViewState extends State<GroceryCategoriesView> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          showModalBottomSheet(context: context, builder: (context) => const GroceryDetail());
+          showModalBottomSheet(context: context, builder: (context) => const GroceryCategoryDetail());
         },
         child: const Icon(Icons.add),
       ),

@@ -26,6 +26,7 @@ class Groceries {
   Groceries() {
     getGroceryLists();
     getGroceries();
+    getGroceryCategories();
   }
 
   void dispose() {
@@ -226,7 +227,7 @@ class Groceries {
           scheme: dotenv.env["API_SCHEME"],
           host: dotenv.env["API_URL"],
           port: dotenv.env["API_PORT"] != null ? int.parse(dotenv.env["API_PORT"]!) : null,
-          path: "/api/groceries/${groceryCategory.id}",
+          path: "/api/grocery_categories/${groceryCategory.id}",
         ),
         headers: <String, String>{
           "Content-Type": "application/json; charset=UTF-8",

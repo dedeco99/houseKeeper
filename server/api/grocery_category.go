@@ -33,7 +33,7 @@ func (server *Server) addGroceryCategory(ctx *gin.Context) {
 		return
 	}
 
-	grocery, err := server.store.AddGroceryCategory(ctx, req.Name)
+	groceryCategory, err := server.store.AddGroceryCategory(ctx, req.Name)
 
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
@@ -41,7 +41,7 @@ func (server *Server) addGroceryCategory(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusCreated, response("ADD_GROCERY_CATEGORY", grocery))
+	ctx.JSON(http.StatusCreated, response("ADD_GROCERY_CATEGORY", groceryCategory))
 }
 
 type editGroceryCategoryRequest struct {
@@ -68,7 +68,6 @@ func (server *Server) editGroceryCategory(ctx *gin.Context) {
 	}
 
 	uuid, err := uuid.Parse(req.ID)
-
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
 
@@ -80,7 +79,7 @@ func (server *Server) editGroceryCategory(ctx *gin.Context) {
 		Name: req.Data.Name,
 	}
 
-	grocery, err := server.store.EditGroceryCategory(ctx, arg)
+	groceryCategory, err := server.store.EditGroceryCategory(ctx, arg)
 
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
@@ -88,7 +87,7 @@ func (server *Server) editGroceryCategory(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, response("EDIT_GROCERY_CATEGORY", grocery))
+	ctx.JSON(http.StatusOK, response("EDIT_GROCERY_CATEGORY", groceryCategory))
 }
 
 type deleteGroceryCategoryRequest struct {
@@ -111,7 +110,7 @@ func (server *Server) deleteGroceryCategory(ctx *gin.Context) {
 		return
 	}
 
-	grocery, err := server.store.DeleteGroceryCategory(ctx, uuid)
+	groceryCategory, err := server.store.DeleteGroceryCategory(ctx, uuid)
 
 	if err != nil {
 		if err == sql.ErrNoRows {
@@ -123,5 +122,5 @@ func (server *Server) deleteGroceryCategory(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, response("DELETE_GROCERY_CATEGORY", grocery))
+	ctx.JSON(http.StatusOK, response("DELETE_GROCERY_CATEGORY", groceryCategory))
 }
