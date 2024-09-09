@@ -1,12 +1,11 @@
-import "package:http/http.dart";
 import "dart:convert";
+import "package:http/http.dart";
+import "package:flutter_dotenv/flutter_dotenv.dart";
 
 import "package:housekeeper/services/grocery.dart";
 import "package:rxdart/rxdart.dart";
 
 class Groceries {
-  static const String host = "192.168.1.69";
-
   BehaviorSubject<List<Grocery>> groceriesSubject = BehaviorSubject.seeded([]);
   BehaviorSubject<List<GroceryList>> groceryListsSubject = BehaviorSubject.seeded([]);
   BehaviorSubject<List<GroceryListGrocery>> groceryListGroceriesSubject = BehaviorSubject.seeded([]);
@@ -56,9 +55,9 @@ class Groceries {
     try {
       Response response = await get(
         Uri(
-          scheme: "http",
-          host: host,
-          port: 5001,
+          scheme: dotenv.env["API_SCHEME"],
+          host: dotenv.env["API_URL"],
+          port: dotenv.env["API_PORT"] != null ? int.parse(dotenv.env["API_PORT"]!) : null,
           path: "/api/groceries",
         ),
       );
@@ -83,9 +82,9 @@ class Groceries {
     try {
       Response response = await post(
         Uri(
-          scheme: "http",
-          host: host,
-          port: 5001,
+          scheme: dotenv.env["API_SCHEME"],
+          host: dotenv.env["API_URL"],
+          port: dotenv.env["API_PORT"] != null ? int.parse(dotenv.env["API_PORT"]!) : null,
           path: "/api/groceries",
         ),
         headers: <String, String>{
@@ -110,9 +109,9 @@ class Groceries {
     try {
       Response response = await put(
         Uri(
-          scheme: "http",
-          host: host,
-          port: 5001,
+          scheme: dotenv.env["API_SCHEME"],
+          host: dotenv.env["API_URL"],
+          port: dotenv.env["API_PORT"] != null ? int.parse(dotenv.env["API_PORT"]!) : null,
           path: "/api/groceries/${grocery.id}",
         ),
         headers: <String, String>{
@@ -143,9 +142,9 @@ class Groceries {
     try {
       Response response = await delete(
         Uri(
-          scheme: "http",
-          host: host,
-          port: 5001,
+          scheme: dotenv.env["API_SCHEME"],
+          host: dotenv.env["API_URL"],
+          port: dotenv.env["API_PORT"] != null ? int.parse(dotenv.env["API_PORT"]!) : null,
           path: "/api/groceries/${grocery.id}",
         ),
       );
@@ -166,9 +165,9 @@ class Groceries {
     try {
       Response response = await get(
         Uri(
-          scheme: "http",
-          host: host,
-          port: 5001,
+          scheme: dotenv.env["API_SCHEME"],
+          host: dotenv.env["API_URL"],
+          port: dotenv.env["API_PORT"] != null ? int.parse(dotenv.env["API_PORT"]!) : null,
           path: "/api/grocery_lists",
         ),
       );
@@ -195,9 +194,9 @@ class Groceries {
     try {
       Response response = await post(
         Uri(
-          scheme: "http",
-          host: host,
-          port: 5001,
+          scheme: dotenv.env["API_SCHEME"],
+          host: dotenv.env["API_URL"],
+          port: dotenv.env["API_PORT"] != null ? int.parse(dotenv.env["API_PORT"]!) : null,
           path: "/api/grocery_lists",
         ),
         headers: <String, String>{
@@ -228,9 +227,9 @@ class Groceries {
 
       Response response = await get(
         Uri(
-          scheme: "http",
-          host: host,
-          port: 5001,
+          scheme: dotenv.env["API_SCHEME"],
+          host: dotenv.env["API_URL"],
+          port: dotenv.env["API_PORT"] != null ? int.parse(dotenv.env["API_PORT"]!) : null,
           path: "/api/grocery_lists/${groceryList.id}",
         ),
       );
@@ -257,9 +256,9 @@ class Groceries {
     try {
       Response response = await post(
         Uri(
-          scheme: "http",
-          host: host,
-          port: 5001,
+          scheme: dotenv.env["API_SCHEME"],
+          host: dotenv.env["API_URL"],
+          port: dotenv.env["API_PORT"] != null ? int.parse(dotenv.env["API_PORT"]!) : null,
           path: "/api/grocery_lists/${groceryList!.id}",
         ),
         headers: <String, String>{
@@ -287,9 +286,9 @@ class Groceries {
     try {
       Response response = await put(
         Uri(
-          scheme: "http",
-          host: host,
-          port: 5001,
+          scheme: dotenv.env["API_SCHEME"],
+          host: dotenv.env["API_URL"],
+          port: dotenv.env["API_PORT"] != null ? int.parse(dotenv.env["API_PORT"]!) : null,
           path: "/api/grocery_lists/groceries/${groceryListGrocery.id}",
         ),
         headers: <String, String>{
@@ -312,9 +311,9 @@ class Groceries {
     try {
       Response response = await delete(
         Uri(
-          scheme: "http",
-          host: host,
-          port: 5001,
+          scheme: dotenv.env["API_SCHEME"],
+          host: dotenv.env["API_URL"],
+          port: dotenv.env["API_PORT"] != null ? int.parse(dotenv.env["API_PORT"]!) : null,
           path: "/api/grocery_lists/groceries/${groceryListGrocery.id}",
         ),
       );

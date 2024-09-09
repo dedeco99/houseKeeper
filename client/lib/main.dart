@@ -1,4 +1,6 @@
 import "package:flutter/material.dart";
+import "package:flutter/foundation.dart";
+import "package:flutter_dotenv/flutter_dotenv.dart";
 import "package:get_it/get_it.dart";
 
 import "package:housekeeper/pages/home.dart";
@@ -7,7 +9,9 @@ import "package:housekeeper/pages/groceries.dart";
 
 import "package:housekeeper/services/groceries.dart";
 
-void main() {
+Future<void> main() async {
+  await dotenv.load(fileName: kReleaseMode ? ".env.production" : ".env");
+
   GetIt.instance.registerSingleton<Groceries>(Groceries());
 
   WidgetsFlutterBinding.ensureInitialized();
