@@ -1,6 +1,8 @@
 import "package:flutter/material.dart";
 import "package:get_it/get_it.dart";
 
+import "package:housekeeper/components/loading.dart";
+
 import "package:housekeeper/services/groceries.dart";
 import "package:housekeeper/services/grocery.dart";
 
@@ -17,6 +19,7 @@ class _GroceryDetailState extends State<GroceryDetail> {
   Groceries groceries = GetIt.instance.get<Groceries>();
 
   late final TextEditingController _name;
+  GroceryCategory? _category;
   late final TextEditingController _defaultQuantity;
   late final TextEditingController _defaultPrice;
 
@@ -28,6 +31,7 @@ class _GroceryDetailState extends State<GroceryDetail> {
 
     if (widget.grocery != null) {
       _name.text = widget.grocery!.name;
+      _category = widget.grocery!.category;
       _defaultQuantity.text = widget.grocery!.defaultQuantity.toString();
       _defaultPrice.text = widget.grocery!.defaultPrice.toString();
     }
@@ -58,6 +62,50 @@ class _GroceryDetailState extends State<GroceryDetail> {
               ),
             ),
             Padding(
+              padding: widget.grocery!.category == null
+                  ? const EdgeInsets.fromLTRB(8, 35, 8, 8)
+                  : const EdgeInsets.all(0),
+              child: widget.grocery!.category == null
+                  ? StreamBuilder(
+                      stream: groceries.groceryCategories$,
+                      builder: (BuildContext context, AsyncSnapshot snapshot) {
+                        switch (snapshot.connectionState) {
+                          case ConnectionState.active:
+                            final groceries = snapshot.data as List<GroceryCategory>;
+
+                            return Autocomplete<GroceryCategory>(
+                              fieldViewBuilder: (context, textEditingController, focusNode, onFieldSubmitted) {
+                                return TextField(
+                                  decoration: const InputDecoration(
+                                    border: OutlineInputBorder(),
+                                    label: Text("Categories"),
+                                  ),
+                                  controller: textEditingController,
+                                  focusNode: focusNode,
+                                );
+                              },
+                              optionsBuilder: (textEditingValue) {
+                                if (textEditingValue.text == "") return groceries;
+
+                                return groceries.where((option) {
+                                  return option.name.toString().contains(textEditingValue.text.toLowerCase());
+                                });
+                              },
+                              displayStringForOption: (option) => option.name,
+                              onSelected: (option) {
+                                setState(() {
+                                  _category = option;
+                                });
+                              },
+                            );
+                          default:
+                            return const Loading();
+                        }
+                      },
+                    )
+                  : null,
+            ),
+            Padding(
               padding: const EdgeInsets.all(8),
               child: TextFormField(
                 controller: _defaultQuantity,
@@ -80,11 +128,17 @@ class _GroceryDetailState extends State<GroceryDetail> {
                   if (_name.text == "") return;
 
                   if (widget.grocery == null) {
-                    await groceries.addGrocery(_name.text, int.parse(_defaultQuantity.text), _defaultPrice.text);
+                    await groceries.addGrocery(
+                      _name.text,
+                      _category,
+                      int.parse(_defaultQuantity.text),
+                      _defaultPrice.text,
+                    );
                   } else {
                     await groceries.editGrocery(
                       widget.grocery!,
                       _name.text,
+                      _category,
                       int.parse(_defaultQuantity.text),
                       _defaultPrice.text,
                     );

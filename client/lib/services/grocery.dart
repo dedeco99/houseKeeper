@@ -4,12 +4,14 @@ import "package:flutter/foundation.dart";
 class Grocery {
   final String id;
   final String name;
+  final GroceryCategory? category;
   final int defaultQuantity;
   final num defaultPrice;
 
   const Grocery({
     required this.id,
     required this.name,
+    this.category,
     this.defaultQuantity = 1,
     this.defaultPrice = 0,
   });

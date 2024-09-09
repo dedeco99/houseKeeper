@@ -83,7 +83,7 @@ class Groceries {
     }
   }
 
-  Future<void> addGrocery(String name, int defaultQuantity, String defaultPrice) async {
+  Future<void> addGrocery(String name, GroceryCategory? category, int defaultQuantity, String defaultPrice) async {
     try {
       Response response = await post(
         Uri(
@@ -95,7 +95,12 @@ class Groceries {
         headers: <String, String>{
           "Content-Type": "application/json; charset=UTF-8",
         },
-        body: jsonEncode({"name": name, "defaultQuantity": defaultQuantity, "defaultPrice": defaultPrice}),
+        body: jsonEncode({
+          "name": name,
+          "category": category?.id,
+          "defaultQuantity": defaultQuantity,
+          "defaultPrice": defaultPrice
+        }),
       );
 
       Map json = jsonDecode(response.body);
@@ -110,7 +115,8 @@ class Groceries {
     }
   }
 
-  Future<void> editGrocery(Grocery grocery, String name, int defaultQuantity, String defaultPrice) async {
+  Future<void> editGrocery(
+      Grocery grocery, String name, GroceryCategory? category, int defaultQuantity, String defaultPrice) async {
     try {
       Response response = await put(
         Uri(
@@ -122,7 +128,12 @@ class Groceries {
         headers: <String, String>{
           "Content-Type": "application/json; charset=UTF-8",
         },
-        body: jsonEncode({"name": name, "defaultQuantity": defaultQuantity, "defaultPrice": defaultPrice}),
+        body: jsonEncode({
+          "name": name,
+          "category": category?.id,
+          "defaultQuantity": defaultQuantity,
+          "defaultPrice": defaultPrice
+        }),
       );
 
       Map json = jsonDecode(response.body);
