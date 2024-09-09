@@ -75,6 +75,12 @@ class _GroceryListViewState extends State<GroceryListView> {
               Navigator.pushNamed(context, "/groceries");
             },
           ),
+          IconButton(
+            icon: const Icon(Icons.category),
+            onPressed: () {
+              Navigator.pushNamed(context, "/grocery_categories");
+            },
+          ),
         ]),
         elevation: 0,
       ),

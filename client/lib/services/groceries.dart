@@ -7,12 +7,15 @@ import "package:rxdart/rxdart.dart";
 
 class Groceries {
   BehaviorSubject<List<Grocery>> groceriesSubject = BehaviorSubject.seeded([]);
+  BehaviorSubject<List<GroceryCategory>> groceryCategoriesSubject = BehaviorSubject.seeded([]);
   BehaviorSubject<List<GroceryList>> groceryListsSubject = BehaviorSubject.seeded([]);
   BehaviorSubject<List<GroceryListGrocery>> groceryListGroceriesSubject = BehaviorSubject.seeded([]);
   BehaviorSubject<GroceryList?> groceryListSubject = BehaviorSubject.seeded(null);
 
   Stream<List<Grocery>> get groceries$ => groceriesSubject.stream;
   List<Grocery> get groceries => groceriesSubject.value;
+  Stream<List<GroceryCategory>> get groceryCategories$ => groceryCategoriesSubject.stream;
+  List<GroceryCategory> get groceryCategories => groceryCategoriesSubject.value;
   Stream<List<GroceryList>> get groceryLists$ => groceryListsSubject.stream;
   List<GroceryList> get groceryLists => groceryListsSubject.value;
   Stream<List<GroceryListGrocery>> get groceryListGroceries$ => groceryListGroceriesSubject.stream;
@@ -27,6 +30,7 @@ class Groceries {
 
   void dispose() {
     groceriesSubject.close();
+    groceryCategoriesSubject.close();
     groceryListsSubject.close();
     groceryListGroceriesSubject.close();
     groceryListSubject.close();
@@ -156,6 +160,108 @@ class Groceries {
       groceryListGroceries.removeWhere((g) => g.id == json["data"]["id"]);
 
       groceryListGroceriesSubject.add(groceryListGroceries);
+    } catch (err) {
+      print("error $err");
+    }
+  }
+
+  Future<void> getGroceryCategories() async {
+    try {
+      Response response = await get(
+        Uri(
+          scheme: dotenv.env["API_SCHEME"],
+          host: dotenv.env["API_URL"],
+          port: dotenv.env["API_PORT"] != null ? int.parse(dotenv.env["API_PORT"]!) : null,
+          path: "/api/grocery_categories",
+        ),
+      );
+
+      Map json = jsonDecode(response.body);
+
+      if (response.statusCode != 200) throw json["message"];
+
+      groceryCategories.clear();
+
+      for (var i = 0; i < json["data"].length; i++) {
+        groceryCategories.add(GroceryCategory(id: json["data"][i]["id"], name: json["data"][i]["name"]));
+      }
+
+      groceryCategoriesSubject.add(groceryCategories);
+    } catch (err) {
+      print("error $err");
+    }
+  }
+
+  Future<void> addGroceryCategory(String name) async {
+    try {
+      Response response = await post(
+        Uri(
+          scheme: dotenv.env["API_SCHEME"],
+          host: dotenv.env["API_URL"],
+          port: dotenv.env["API_PORT"] != null ? int.parse(dotenv.env["API_PORT"]!) : null,
+          path: "/api/grocery_categories",
+        ),
+        headers: <String, String>{
+          "Content-Type": "application/json; charset=UTF-8",
+        },
+        body: jsonEncode({"name": name}),
+      );
+
+      Map json = jsonDecode(response.body);
+
+      if (response.statusCode != 201) throw json["message"];
+
+      groceryCategories.insert(0, GroceryCategory(id: json["data"]["id"], name: json["data"]["name"]));
+
+      groceryCategoriesSubject.add(groceryCategories);
+    } catch (err) {
+      print("error $err");
+    }
+  }
+
+  Future<void> editGroceryCategory(GroceryCategory groceryCategory, String name) async {
+    try {
+      Response response = await put(
+        Uri(
+          scheme: dotenv.env["API_SCHEME"],
+          host: dotenv.env["API_URL"],
+          port: dotenv.env["API_PORT"] != null ? int.parse(dotenv.env["API_PORT"]!) : null,
+          path: "/api/groceries/${groceryCategory.id}",
+        ),
+        headers: <String, String>{
+          "Content-Type": "application/json; charset=UTF-8",
+        },
+        body: jsonEncode({"name": name}),
+      );
+
+      Map json = jsonDecode(response.body);
+
+      if (response.statusCode != 200) throw json["message"];
+
+      var editedCategory = GroceryCategory(id: json["data"]["id"], name: json["data"]["name"]);
+
+      groceryCategories[groceryCategories.indexWhere((g) => g.id == editedCategory.id)] = editedCategory;
+
+      groceryCategoriesSubject.add(groceryCategories);
+    } catch (err) {
+      print("error $err");
+    }
+  }
+
+  Future<void> deleteGroceryCategory(GroceryCategory groceryCategory) async {
+    try {
+      Response response = await delete(
+        Uri(
+          scheme: dotenv.env["API_SCHEME"],
+          host: dotenv.env["API_URL"],
+          port: dotenv.env["API_PORT"] != null ? int.parse(dotenv.env["API_PORT"]!) : null,
+          path: "/api/grocery_categories/${groceryCategory.id}",
+        ),
+      );
+
+      Map json = jsonDecode(response.body);
+
+      if (response.statusCode != 200) throw json["message"];
     } catch (err) {
       print("error $err");
     }

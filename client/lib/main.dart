@@ -6,6 +6,7 @@ import "package:get_it/get_it.dart";
 import "package:housekeeper/pages/home.dart";
 import "package:housekeeper/pages/grocery_list.dart";
 import "package:housekeeper/pages/groceries.dart";
+import "package:housekeeper/pages/grocery_categories.dart";
 
 import "package:housekeeper/services/groceries.dart";
 
@@ -27,8 +28,9 @@ Future<void> main() async {
     home: const Home(),
     routes: {
       "/home": (context) => const Home(),
-      "/groceryList": (context) => const GroceryListView(),
+      "/grocery_list": (context) => const GroceryListView(),
       "/groceries": (context) => const GroceriesView(),
+      "/grocery_categories": (context) => const GroceryCategoriesView(),
     },
   ));
 }

@@ -22,6 +22,20 @@ class Grocery {
 }
 
 @immutable
+class GroceryCategory {
+  final String id;
+  final String name;
+
+  const GroceryCategory({required this.id, required this.name});
+
+  @override
+  bool operator ==(covariant GroceryCategory other) => id == other.id;
+
+  @override
+  int get hashCode => id.hashCode;
+}
+
+@immutable
 class GroceryList {
   final String id;
   final String name;
