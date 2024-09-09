@@ -1,4 +1,4 @@
-CREATE TABLE "category"(
+CREATE TABLE "grocery_category"(
   "id" uuid PRIMARY KEY NOT NULL DEFAULT (public.uuid_generate_v4()),
   "active" boolean NOT NULL DEFAULT TRUE,
   "name" text NOT NULL,
@@ -48,9 +48,9 @@ CREATE TABLE "account"(
   "created" timestamp NOT NULL DEFAULT (now())
 );
 
-CREATE INDEX ON "category"("active");
+CREATE INDEX ON "grocery_category"("active");
 
-CREATE INDEX ON "category"("name");
+CREATE INDEX ON "grocery_category"("name");
 
 CREATE INDEX ON "grocery"("active");
 
@@ -83,7 +83,7 @@ CREATE UNIQUE INDEX ON "account"("email");
 CREATE INDEX ON "account"("household");
 
 ALTER TABLE "grocery"
-  ADD FOREIGN KEY ("category") REFERENCES "category"("id");
+  ADD FOREIGN KEY ("category") REFERENCES "grocery_category"("id");
 
 ALTER TABLE "grocery_list_grocery"
   ADD FOREIGN KEY ("grocery_list") REFERENCES "grocery_list"("id");

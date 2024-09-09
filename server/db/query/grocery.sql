@@ -9,8 +9,8 @@ ORDER BY
   name DESC;
 
 -- name: AddGrocery :one
-INSERT INTO grocery(name, default_quantity, default_price)
-  VALUES ($1, $2, $3)
+INSERT INTO grocery(name, category, default_quantity, default_price)
+  VALUES ($1, $2, $3, $4)
 RETURNING
   *;
 
@@ -19,8 +19,9 @@ UPDATE
   grocery
 SET
   name = $2,
-  default_quantity = $3,
-  default_price = $4
+  category = $3,
+  default_quantity = $4,
+  default_price = $5
 WHERE
   id = $1
 RETURNING
