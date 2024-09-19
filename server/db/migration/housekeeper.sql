@@ -27,6 +27,7 @@ CREATE TABLE "grocery_list_grocery"(
   "active" boolean NOT NULL DEFAULT TRUE,
   "grocery_list" uuid NOT NULL,
   "grocery" uuid NOT NULL,
+  "grocery_category" uuid,
   "quantity" smallint NOT NULL DEFAULT 1,
   "price" numeric NOT NULL DEFAULT 0,
   "created" timestamp NOT NULL DEFAULT (now())
@@ -68,6 +69,8 @@ CREATE INDEX ON "grocery_list_grocery"("grocery_list");
 
 CREATE INDEX ON "grocery_list_grocery"("grocery");
 
+CREATE INDEX ON "grocery_list_grocery"("grocery_category");
+
 CREATE UNIQUE INDEX ON "grocery_list_grocery"("grocery", "grocery_list");
 
 CREATE INDEX ON "household"("active");
@@ -90,6 +93,9 @@ ALTER TABLE "grocery_list_grocery"
 
 ALTER TABLE "grocery_list_grocery"
   ADD FOREIGN KEY ("grocery") REFERENCES "grocery"("id");
+
+ALTER TABLE "grocery_list_grocery"
+  ADD FOREIGN KEY ("grocery_category") REFERENCES "grocery_category"("id");
 
 ALTER TABLE "account"
   ADD FOREIGN KEY ("household") REFERENCES "household"("id");

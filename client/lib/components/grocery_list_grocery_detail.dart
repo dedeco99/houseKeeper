@@ -19,6 +19,7 @@ class _GroceryListGroceryDetailState extends State<GroceryListGroceryDetail> {
   Groceries groceries = GetIt.instance.get<Groceries>();
 
   Grocery? _grocery;
+  GroceryCategory? _groceryCategory;
   GroceryList? _groceryList;
   late final TextEditingController _quantity;
   late final TextEditingController _price;
@@ -30,6 +31,7 @@ class _GroceryListGroceryDetailState extends State<GroceryListGroceryDetail> {
 
     if (widget.groceryListGrocery != null) {
       _grocery = widget.groceryListGrocery!.grocery;
+      _groceryCategory = widget.groceryListGrocery!.groceryCategory;
       _groceryList = widget.groceryListGrocery!.groceryList;
       _quantity.text = widget.groceryListGrocery!.quantity.toString();
       _price.text = widget.groceryListGrocery!.price.toString();
@@ -129,6 +131,7 @@ class _GroceryListGroceryDetailState extends State<GroceryListGroceryDetail> {
                               onSelected: (option) {
                                 setState(() {
                                   _grocery = option;
+                                  _groceryCategory = option.category;
                                   _quantity.text = option.defaultQuantity.toString();
                                   _price.text = option.defaultPrice.toString();
                                 });
@@ -164,7 +167,12 @@ class _GroceryListGroceryDetailState extends State<GroceryListGroceryDetail> {
                   if (_grocery == null) return;
 
                   if (widget.groceryListGrocery == null) {
-                    await groceries.addGroceryListGrocery(_grocery!, int.parse(_quantity.text), _price.text);
+                    await groceries.addGroceryListGrocery(
+                      _grocery!,
+                      _groceryCategory,
+                      int.parse(_quantity.text),
+                      _price.text,
+                    );
                   } else {
                     await groceries.editGroceryListGrocery(
                       widget.groceryListGrocery!,

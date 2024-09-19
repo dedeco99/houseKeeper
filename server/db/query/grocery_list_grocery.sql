@@ -3,10 +3,11 @@ SELECT
   grocery_list_grocery.*,
   grocery_list.name AS grocery_list_name,
   grocery.name,
-  grocery.category
+  grocery_category.name AS grocery_category_name
 FROM
   grocery_list_grocery
   LEFT JOIN grocery ON grocery_list_grocery.grocery = grocery.id
+  LEFT JOIN grocery_category ON grocery_list_grocery.grocery_category = grocery_category.id
   LEFT JOIN grocery_list ON grocery_list_grocery.grocery_list = grocery_list.id
 WHERE
   grocery_list_grocery.active = TRUE
@@ -15,8 +16,8 @@ ORDER BY
   grocery_list_grocery.created DESC;
 
 -- name: AddGroceryListGrocery :one
-INSERT INTO grocery_list_grocery(grocery_list, grocery, quantity, price)
-  VALUES ($1, $2, $3, $4)
+INSERT INTO grocery_list_grocery(grocery_list, grocery, grocery_category, quantity, price)
+  VALUES ($1, $2, $3, $4, $5)
 RETURNING
   *;
 

@@ -41,6 +41,9 @@ class Groceries {
     return Grocery(
       id: inGroceryList ? data["grocery"] : data["id"],
       name: inGroceryList ? data["name"]["String"] : data["name"],
+      category: data["category"] == null
+          ? null
+          : GroceryCategory(id: data["category"], name: data["category_name"]["String"]),
       defaultQuantity: data["default_quantity"] ?? 1,
       defaultPrice: num.parse(data["default_price"] ?? "0"),
     );
@@ -51,6 +54,9 @@ class Groceries {
       id: data["id"],
       groceryList: GroceryList(id: data["grocery_list"], name: data["grocery_list_name"]["String"]),
       grocery: getGrocery(data, true),
+      groceryCategory: data["grocery_category"] == null
+          ? null
+          : GroceryCategory(id: data["grocery_category"], name: data["grocery_category_name"]["String"]),
       price: num.parse(data["price"]),
       quantity: data["quantity"],
     );
@@ -370,7 +376,12 @@ class Groceries {
     }
   }
 
-  Future<void> addGroceryListGrocery(Grocery grocery, int quantity, String price) async {
+  Future<void> addGroceryListGrocery(
+    Grocery grocery,
+    GroceryCategory? groceryCategory,
+    int quantity,
+    String price,
+  ) async {
     try {
       Response response = await post(
         Uri(
@@ -382,7 +393,12 @@ class Groceries {
         headers: <String, String>{
           "Content-Type": "application/json; charset=UTF-8",
         },
-        body: jsonEncode({"grocery": grocery.id, "quantity": quantity, "price": price}),
+        body: jsonEncode({
+          "grocery": grocery.id,
+          "groceryCategory": groceryCategory?.id,
+          "quantity": quantity,
+          "price": price,
+        }),
       );
 
       Map json = jsonDecode(response.body);

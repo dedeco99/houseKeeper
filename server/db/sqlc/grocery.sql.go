@@ -7,6 +7,8 @@ package db
 
 import (
 	"context"
+	"database/sql"
+	"time"
 
 	"github.com/google/uuid"
 )
@@ -116,24 +118,37 @@ func (q *Queries) EditGrocery(ctx context.Context, arg EditGroceryParams) (Groce
 
 const getGroceries = `-- name: GetGroceries :many
 SELECT
-  id, active, name, category, default_quantity, default_price, created
+  grocery.id, grocery.active, grocery.name, grocery.category, grocery.default_quantity, grocery.default_price, grocery.created,
+  grocery_category.name AS category_name
 FROM
   grocery
+  LEFT JOIN grocery_category ON grocery.category = grocery_category.id
 WHERE
-  active = TRUE
+  grocery.active = TRUE
 ORDER BY
-  name DESC
+  grocery.name DESC
 `
 
-func (q *Queries) GetGroceries(ctx context.Context) ([]Grocery, error) {
+type GetGroceriesRow struct {
+	ID              uuid.UUID      `json:"id"`
+	Active          bool           `json:"active"`
+	Name            string         `json:"name"`
+	Category        uuid.NullUUID  `json:"category"`
+	DefaultQuantity int16          `json:"default_quantity"`
+	DefaultPrice    string         `json:"default_price"`
+	Created         time.Time      `json:"created"`
+	CategoryName    sql.NullString `json:"category_name"`
+}
+
+func (q *Queries) GetGroceries(ctx context.Context) ([]GetGroceriesRow, error) {
 	rows, err := q.db.QueryContext(ctx, getGroceries)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	items := []Grocery{}
+	items := []GetGroceriesRow{}
 	for rows.Next() {
-		var i Grocery
+		var i GetGroceriesRow
 		if err := rows.Scan(
 			&i.ID,
 			&i.Active,
@@ -142,6 +157,7 @@ func (q *Queries) GetGroceries(ctx context.Context) ([]Grocery, error) {
 			&i.DefaultQuantity,
 			&i.DefaultPrice,
 			&i.Created,
+			&i.CategoryName,
 		); err != nil {
 			return nil, err
 		}

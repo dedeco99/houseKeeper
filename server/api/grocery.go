@@ -51,7 +51,7 @@ func (server *Server) addGrocery(ctx *gin.Context) {
 
 	arg := db.AddGroceryParams{
 		Name:            req.Name,
-		Category:        uuid.NullUUID{UUID: categoryUUID},
+		Category:        uuid.NullUUID{UUID: categoryUUID, Valid: true},
 		DefaultQuantity: int16(req.DefaultQuantity),
 		DefaultPrice:    defaultPrice,
 	}

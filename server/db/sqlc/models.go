@@ -44,13 +44,14 @@ type GroceryList struct {
 }
 
 type GroceryListGrocery struct {
-	ID          uuid.UUID `json:"id"`
-	Active      bool      `json:"active"`
-	GroceryList uuid.UUID `json:"grocery_list"`
-	Grocery     uuid.UUID `json:"grocery"`
-	Quantity    int16     `json:"quantity"`
-	Price       string    `json:"price"`
-	Created     time.Time `json:"created"`
+	ID              uuid.UUID     `json:"id"`
+	Active          bool          `json:"active"`
+	GroceryList     uuid.UUID     `json:"grocery_list"`
+	Grocery         uuid.UUID     `json:"grocery"`
+	GroceryCategory uuid.NullUUID `json:"grocery_category"`
+	Quantity        int16         `json:"quantity"`
+	Price           string        `json:"price"`
+	Created         time.Time     `json:"created"`
 }
 
 type Household struct {

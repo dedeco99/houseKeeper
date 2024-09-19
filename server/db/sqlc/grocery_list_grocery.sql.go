@@ -14,23 +14,25 @@ import (
 )
 
 const addGroceryListGrocery = `-- name: AddGroceryListGrocery :one
-INSERT INTO grocery_list_grocery(grocery_list, grocery, quantity, price)
-  VALUES ($1, $2, $3, $4)
+INSERT INTO grocery_list_grocery(grocery_list, grocery, grocery_category, quantity, price)
+  VALUES ($1, $2, $3, $4, $5)
 RETURNING
-  id, active, grocery_list, grocery, quantity, price, created
+  id, active, grocery_list, grocery, grocery_category, quantity, price, created
 `
 
 type AddGroceryListGroceryParams struct {
-	GroceryList uuid.UUID `json:"grocery_list"`
-	Grocery     uuid.UUID `json:"grocery"`
-	Quantity    int16     `json:"quantity"`
-	Price       string    `json:"price"`
+	GroceryList     uuid.UUID     `json:"grocery_list"`
+	Grocery         uuid.UUID     `json:"grocery"`
+	GroceryCategory uuid.NullUUID `json:"grocery_category"`
+	Quantity        int16         `json:"quantity"`
+	Price           string        `json:"price"`
 }
 
 func (q *Queries) AddGroceryListGrocery(ctx context.Context, arg AddGroceryListGroceryParams) (GroceryListGrocery, error) {
 	row := q.db.QueryRowContext(ctx, addGroceryListGrocery,
 		arg.GroceryList,
 		arg.Grocery,
+		arg.GroceryCategory,
 		arg.Quantity,
 		arg.Price,
 	)
@@ -40,6 +42,7 @@ func (q *Queries) AddGroceryListGrocery(ctx context.Context, arg AddGroceryListG
 		&i.Active,
 		&i.GroceryList,
 		&i.Grocery,
+		&i.GroceryCategory,
 		&i.Quantity,
 		&i.Price,
 		&i.Created,
@@ -51,7 +54,7 @@ const deleteGroceryListGrocery = `-- name: DeleteGroceryListGrocery :one
 DELETE FROM grocery_list_grocery
 WHERE id = $1
 RETURNING
-  id, active, grocery_list, grocery, quantity, price, created
+  id, active, grocery_list, grocery, grocery_category, quantity, price, created
 `
 
 func (q *Queries) DeleteGroceryListGrocery(ctx context.Context, id uuid.UUID) (GroceryListGrocery, error) {
@@ -62,6 +65,7 @@ func (q *Queries) DeleteGroceryListGrocery(ctx context.Context, id uuid.UUID) (G
 		&i.Active,
 		&i.GroceryList,
 		&i.Grocery,
+		&i.GroceryCategory,
 		&i.Quantity,
 		&i.Price,
 		&i.Created,
@@ -80,7 +84,7 @@ WHERE
   id = $1
   OR grocery = $1
 RETURNING
-  id, active, grocery_list, grocery, quantity, price, created
+  id, active, grocery_list, grocery, grocery_category, quantity, price, created
 `
 
 type EditGroceryListGroceryParams struct {
@@ -103,6 +107,7 @@ func (q *Queries) EditGroceryListGrocery(ctx context.Context, arg EditGroceryLis
 		&i.Active,
 		&i.GroceryList,
 		&i.Grocery,
+		&i.GroceryCategory,
 		&i.Quantity,
 		&i.Price,
 		&i.Created,
@@ -112,13 +117,14 @@ func (q *Queries) EditGroceryListGrocery(ctx context.Context, arg EditGroceryLis
 
 const getGroceryListGroceries = `-- name: GetGroceryListGroceries :many
 SELECT
-  grocery_list_grocery.id, grocery_list_grocery.active, grocery_list_grocery.grocery_list, grocery_list_grocery.grocery, grocery_list_grocery.quantity, grocery_list_grocery.price, grocery_list_grocery.created,
+  grocery_list_grocery.id, grocery_list_grocery.active, grocery_list_grocery.grocery_list, grocery_list_grocery.grocery, grocery_list_grocery.grocery_category, grocery_list_grocery.quantity, grocery_list_grocery.price, grocery_list_grocery.created,
   grocery_list.name AS grocery_list_name,
   grocery.name,
-  grocery.category
+  grocery_category.name AS grocery_category_name
 FROM
   grocery_list_grocery
   LEFT JOIN grocery ON grocery_list_grocery.grocery = grocery.id
+  LEFT JOIN grocery_category ON grocery_list_grocery.grocery_category = grocery_category.id
   LEFT JOIN grocery_list ON grocery_list_grocery.grocery_list = grocery_list.id
 WHERE
   grocery_list_grocery.active = TRUE
@@ -128,16 +134,17 @@ ORDER BY
 `
 
 type GetGroceryListGroceriesRow struct {
-	ID              uuid.UUID      `json:"id"`
-	Active          bool           `json:"active"`
-	GroceryList     uuid.UUID      `json:"grocery_list"`
-	Grocery         uuid.UUID      `json:"grocery"`
-	Quantity        int16          `json:"quantity"`
-	Price           string         `json:"price"`
-	Created         time.Time      `json:"created"`
-	GroceryListName sql.NullString `json:"grocery_list_name"`
-	Name            sql.NullString `json:"name"`
-	Category        uuid.NullUUID  `json:"category"`
+	ID                  uuid.UUID      `json:"id"`
+	Active              bool           `json:"active"`
+	GroceryList         uuid.UUID      `json:"grocery_list"`
+	Grocery             uuid.UUID      `json:"grocery"`
+	GroceryCategory     uuid.NullUUID  `json:"grocery_category"`
+	Quantity            int16          `json:"quantity"`
+	Price               string         `json:"price"`
+	Created             time.Time      `json:"created"`
+	GroceryListName     sql.NullString `json:"grocery_list_name"`
+	Name                sql.NullString `json:"name"`
+	GroceryCategoryName sql.NullString `json:"grocery_category_name"`
 }
 
 func (q *Queries) GetGroceryListGroceries(ctx context.Context, groceryList uuid.UUID) ([]GetGroceryListGroceriesRow, error) {
@@ -154,12 +161,13 @@ func (q *Queries) GetGroceryListGroceries(ctx context.Context, groceryList uuid.
 			&i.Active,
 			&i.GroceryList,
 			&i.Grocery,
+			&i.GroceryCategory,
 			&i.Quantity,
 			&i.Price,
 			&i.Created,
 			&i.GroceryListName,
 			&i.Name,
-			&i.Category,
+			&i.GroceryCategoryName,
 		); err != nil {
 			return nil, err
 		}

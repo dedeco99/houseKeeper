@@ -44,9 +44,10 @@ type addGroceryListGroceryRequest struct {
 	ID string `uri:"id" binding:"required"`
 
 	Data struct {
-		Grocery  string `json:"grocery"`
-		Quantity int    `json:"quantity"`
-		Price    string `json:"price"`
+		Grocery         string `json:"grocery"`
+		GroceryCategory string `json:"groceryCategory"`
+		Quantity        int    `json:"quantity"`
+		Price           string `json:"price"`
 	}
 }
 
@@ -67,8 +68,9 @@ func (server *Server) addGroceryListGrocery(ctx *gin.Context) {
 
 	groceryListUUID, err := uuid.Parse(req.ID)
 	groceryUUID, err2 := uuid.Parse(req.Data.Grocery)
+	groceryCategoryUUID, err3 := uuid.Parse(req.Data.GroceryCategory)
 
-	if err != nil || err2 != nil {
+	if err != nil || err2 != nil || err3 != nil {
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
 
 		return
@@ -80,10 +82,11 @@ func (server *Server) addGroceryListGrocery(ctx *gin.Context) {
 	}
 
 	arg := db.AddGroceryListGroceryParams{
-		GroceryList: groceryListUUID,
-		Grocery:     groceryUUID,
-		Quantity:    int16(req.Data.Quantity),
-		Price:       price,
+		GroceryList:     groceryListUUID,
+		Grocery:         groceryUUID,
+		GroceryCategory: uuid.NullUUID{UUID: groceryCategoryUUID, Valid: true},
+		Quantity:        int16(req.Data.Quantity),
+		Price:           price,
 	}
 
 	groceryListGrocery, err := server.store.AddGroceryListGrocery(ctx, arg)

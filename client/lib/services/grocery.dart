@@ -56,6 +56,7 @@ class GroceryListGrocery {
   final String id;
   final GroceryList groceryList;
   final Grocery grocery;
+  final GroceryCategory? groceryCategory;
   final int quantity;
   final num price;
 
@@ -63,6 +64,7 @@ class GroceryListGrocery {
     required this.id,
     required this.groceryList,
     required this.grocery,
+    this.groceryCategory,
     this.quantity = 1,
     this.price = 0,
   });
