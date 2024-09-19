@@ -113,9 +113,7 @@ class Groceries {
 
       if (response.statusCode != 201) throw json["message"];
 
-      groceries.insert(0, getGrocery(json["data"], false));
-
-      groceriesSubject.add(groceries);
+      getGroceries();
     } catch (err) {
       print("error $err");
     }
@@ -146,15 +144,7 @@ class Groceries {
 
       if (response.statusCode != 200) throw json["message"];
 
-      var editedGrocery = getGrocery(json["data"], false);
-
-      groceries[groceries.indexWhere((g) => g.id == editedGrocery.id)] = editedGrocery;
-
-      groceriesSubject.add(groceries);
-
-      bool groceryListHasGrocery = groceryListGroceries.map((g) => g.grocery).contains(grocery);
-
-      if (groceryListHasGrocery) getGroceryListGroceries(groceryList!);
+      getGroceries();
     } catch (err) {
       print("error $err");
     }
