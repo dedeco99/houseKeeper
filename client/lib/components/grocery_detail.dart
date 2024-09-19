@@ -62,48 +62,45 @@ class _GroceryDetailState extends State<GroceryDetail> {
               ),
             ),
             Padding(
-              padding: widget.grocery!.category == null
-                  ? const EdgeInsets.fromLTRB(8, 35, 8, 8)
-                  : const EdgeInsets.all(0),
-              child: widget.grocery!.category == null
-                  ? StreamBuilder(
-                      stream: groceries.groceryCategories$,
-                      builder: (BuildContext context, AsyncSnapshot snapshot) {
-                        switch (snapshot.connectionState) {
-                          case ConnectionState.active:
-                            final groceries = snapshot.data as List<GroceryCategory>;
+              padding: const EdgeInsets.all(8),
+              child: StreamBuilder(
+                stream: groceries.groceryCategories$,
+                builder: (BuildContext context, AsyncSnapshot snapshot) {
+                  switch (snapshot.connectionState) {
+                    case ConnectionState.active:
+                      final groceries = snapshot.data as List<GroceryCategory>;
 
-                            return Autocomplete<GroceryCategory>(
-                              fieldViewBuilder: (context, textEditingController, focusNode, onFieldSubmitted) {
-                                return TextField(
-                                  decoration: const InputDecoration(
-                                    border: OutlineInputBorder(),
-                                    label: Text("Categories"),
-                                  ),
-                                  controller: textEditingController,
-                                  focusNode: focusNode,
-                                );
-                              },
-                              optionsBuilder: (textEditingValue) {
-                                if (textEditingValue.text == "") return groceries;
+                      return Autocomplete<GroceryCategory>(
+                        fieldViewBuilder: (context, textEditingController, focusNode, onFieldSubmitted) {
+                          return TextField(
+                            decoration: const InputDecoration(
+                              border: OutlineInputBorder(),
+                              label: Text("Category"),
+                            ),
+                            controller: textEditingController,
+                            focusNode: focusNode,
+                          );
+                        },
+                        optionsBuilder: (textEditingValue) {
+                          if (textEditingValue.text == "") return groceries;
 
-                                return groceries.where((option) {
-                                  return option.name.toString().contains(textEditingValue.text.toLowerCase());
-                                });
-                              },
-                              displayStringForOption: (option) => option.name,
-                              onSelected: (option) {
-                                setState(() {
-                                  _category = option;
-                                });
-                              },
-                            );
-                          default:
-                            return const Loading();
-                        }
-                      },
-                    )
-                  : null,
+                          return groceries.where((option) {
+                            return option.name.toString().contains(textEditingValue.text.toLowerCase());
+                          });
+                        },
+                        displayStringForOption: (option) => option.name,
+                        initialValue: TextEditingValue(text: _category != null ? _category!.name : ""),
+                        onSelected: (option) {
+                          setState(() {
+                            _category = option;
+                          });
+                        },
+                      );
+                    default:
+                      return const Loading();
+                  }
+                },
+              ),
             ),
             Padding(
               padding: const EdgeInsets.all(8),
