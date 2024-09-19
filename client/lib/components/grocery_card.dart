@@ -22,6 +22,7 @@ class _GroceryCardState extends State<GroceryCard> {
   Groceries groceries = GetIt.instance.get<Groceries>();
 
   dynamic _grocery;
+  GroceryCategory? _category;
   String _name = "";
   int _quantity = 1;
   num _price = 0;
@@ -43,12 +44,14 @@ class _GroceryCardState extends State<GroceryCard> {
   Widget build(BuildContext context) {
     if (widget.grocery != null) {
       _grocery = widget.grocery;
+      _category = widget.grocery!.category;
       _name = widget.grocery!.name;
       _quantity = widget.grocery!.defaultQuantity;
       _price = widget.grocery!.defaultPrice;
       _detail = GroceryDetail(grocery: _grocery);
     } else {
       _grocery = widget.groceryListGrocery;
+      _category = widget.groceryListGrocery!.groceryCategory;
       _name = widget.groceryListGrocery!.grocery.name;
       _quantity = widget.groceryListGrocery!.quantity;
       _price = widget.groceryListGrocery!.price;
@@ -86,7 +89,10 @@ class _GroceryCardState extends State<GroceryCard> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Column(children: [Text(_name, style: const TextStyle(fontSize: 28, letterSpacing: 2))]),
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  Text(_name, style: const TextStyle(fontSize: 28, letterSpacing: 2)),
+                  _category != null ? Chip(label: Text(_category?.name ?? "")) : const Text("")
+                ]),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
