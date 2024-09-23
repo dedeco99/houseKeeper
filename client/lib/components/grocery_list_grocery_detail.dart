@@ -52,56 +52,105 @@ class _GroceryListGroceryDetailState extends State<GroceryListGroceryDetail> {
   Widget build(BuildContext context) {
     return Center(
       child: Form(
-        child: Column(
-          children: [
-            Padding(
-              padding: widget.groceryListGrocery == null
-                  ? const EdgeInsets.all(0)
-                  : const EdgeInsets.fromLTRB(8, 35, 8, 8),
-              child: StreamBuilder(
-                stream: groceries.groceryList$,
-                builder: (BuildContext context, AsyncSnapshot snapshot) {
-                  switch (snapshot.connectionState) {
-                    case ConnectionState.active:
-                      final groceryList = snapshot.data as GroceryList;
+        child: StreamBuilder(
+          stream: groceries.groceryList$,
+          builder: (BuildContext context, AsyncSnapshot snapshot) {
+            switch (snapshot.connectionState) {
+              case ConnectionState.active:
+                final groceryList = snapshot.data as GroceryList;
 
-                      return widget.groceryListGrocery != null || groceryList.id == "all"
+                return Column(
+                  children: [
+                    Padding(
+                        padding: widget.groceryListGrocery == null && groceryList.id != "all"
+                            ? const EdgeInsets.all(0)
+                            : const EdgeInsets.fromLTRB(8, 35, 8, 8),
+                        child: widget.groceryListGrocery != null || groceryList.id == "all"
+                            ? StreamBuilder(
+                                stream: groceries.groceryLists$,
+                                builder: (BuildContext context, AsyncSnapshot snapshot) {
+                                  switch (snapshot.connectionState) {
+                                    case ConnectionState.active:
+                                      final groceryLists = snapshot.data as List<GroceryList>;
+
+                                      return Autocomplete<GroceryList>(
+                                        fieldViewBuilder:
+                                            (context, textEditingController, focusNode, onFieldSubmitted) {
+                                          return TextField(
+                                            decoration: const InputDecoration(
+                                              border: OutlineInputBorder(),
+                                              label: Text("Grocery List"),
+                                            ),
+                                            controller: textEditingController,
+                                            focusNode: focusNode,
+                                          );
+                                        },
+                                        optionsBuilder: (textEditingValue) {
+                                          return textEditingValue.text == ""
+                                              ? groceryLists.where((l) => l.id != "all")
+                                              : groceryLists.where((l) {
+                                                  return l.id != "all" &&
+                                                      l.name
+                                                          .toString()
+                                                          .contains(textEditingValue.text.toLowerCase());
+                                                });
+                                        },
+                                        displayStringForOption: (option) => option.name,
+                                        initialValue: TextEditingValue(
+                                            text: widget.groceryListGrocery != null
+                                                ? widget.groceryListGrocery!.groceryList.name
+                                                : ""),
+                                        onSelected: (option) {
+                                          setState(() => _groceryList = option);
+                                        },
+                                      );
+                                    default:
+                                      return const Loading();
+                                  }
+                                },
+                              )
+                            : const Padding(padding: EdgeInsets.all(0))),
+                    Padding(
+                      padding: widget.groceryListGrocery == null
+                          ? EdgeInsets.fromLTRB(8, groceryList.id == "all" ? 8 : 35, 8, 8)
+                          : const EdgeInsets.all(0),
+                      child: widget.groceryListGrocery == null
                           ? StreamBuilder(
-                              stream: groceries.groceryLists$,
+                              stream: groceries.groceries$,
                               builder: (BuildContext context, AsyncSnapshot snapshot) {
                                 switch (snapshot.connectionState) {
                                   case ConnectionState.active:
-                                    final groceryLists = snapshot.data as List<GroceryList>;
+                                    final groceries = snapshot.data as List<Grocery>;
 
-                                    return Autocomplete<GroceryList>(
+                                    return Autocomplete<Grocery>(
                                       fieldViewBuilder:
                                           (context, textEditingController, focusNode, onFieldSubmitted) {
                                         return TextField(
                                           decoration: const InputDecoration(
                                             border: OutlineInputBorder(),
-                                            label: Text("Grocery List"),
+                                            label: Text("Grocery"),
                                           ),
                                           controller: textEditingController,
                                           focusNode: focusNode,
                                         );
                                       },
                                       optionsBuilder: (textEditingValue) {
-                                        return textEditingValue.text == ""
-                                            ? groceryLists.where((l) => l.id != "all")
-                                            : groceryLists.where((l) {
-                                                return l.id != "all" &&
-                                                    l.name
-                                                        .toString()
-                                                        .contains(textEditingValue.text.toLowerCase());
-                                              });
+                                        if (textEditingValue.text == "") return groceries;
+
+                                        return groceries.where((option) {
+                                          return option.name
+                                              .toString()
+                                              .contains(textEditingValue.text.toLowerCase());
+                                        });
                                       },
                                       displayStringForOption: (option) => option.name,
-                                      initialValue: TextEditingValue(
-                                          text: widget.groceryListGrocery != null
-                                              ? widget.groceryListGrocery!.groceryList.name
-                                              : ""),
                                       onSelected: (option) {
-                                        setState(() => _groceryList = option);
+                                        setState(() {
+                                          _grocery = option;
+                                          _groceryCategory = option.category;
+                                          _quantity.text = option.defaultQuantity.toString();
+                                          _price.text = option.defaultPrice.toString();
+                                        });
                                       },
                                     );
                                   default:
@@ -109,105 +158,58 @@ class _GroceryListGroceryDetailState extends State<GroceryListGroceryDetail> {
                                 }
                               },
                             )
-                          : const Text("");
-                    default:
-                      return const Loading();
-                  }
-                },
-              ),
-            ),
-            Padding(
-              padding: widget.groceryListGrocery == null
-                  ? const EdgeInsets.fromLTRB(8, 35, 8, 8)
-                  : const EdgeInsets.all(0),
-              child: widget.groceryListGrocery == null
-                  ? StreamBuilder(
-                      stream: groceries.groceries$,
-                      builder: (BuildContext context, AsyncSnapshot snapshot) {
-                        switch (snapshot.connectionState) {
-                          case ConnectionState.active:
-                            final groceries = snapshot.data as List<Grocery>;
+                          : null,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8),
+                      child: TextFormField(
+                        controller: _quantity,
+                        keyboardType: TextInputType.number,
+                        decoration: const InputDecoration(border: OutlineInputBorder(), labelText: "Quantity"),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8),
+                      child: TextFormField(
+                        controller: _price,
+                        keyboardType: TextInputType.number,
+                        decoration: const InputDecoration(border: OutlineInputBorder(), labelText: "Price"),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8),
+                      child: TextButton(
+                        onPressed: () async {
+                          if (_grocery == null) return;
 
-                            return Autocomplete<Grocery>(
-                              fieldViewBuilder: (context, textEditingController, focusNode, onFieldSubmitted) {
-                                return TextField(
-                                  decoration: const InputDecoration(
-                                    border: OutlineInputBorder(),
-                                    label: Text("Grocery"),
-                                  ),
-                                  controller: textEditingController,
-                                  focusNode: focusNode,
-                                );
-                              },
-                              optionsBuilder: (textEditingValue) {
-                                if (textEditingValue.text == "") return groceries;
-
-                                return groceries.where((option) {
-                                  return option.name.toString().contains(textEditingValue.text.toLowerCase());
-                                });
-                              },
-                              displayStringForOption: (option) => option.name,
-                              onSelected: (option) {
-                                setState(() {
-                                  _grocery = option;
-                                  _groceryCategory = option.category;
-                                  _quantity.text = option.defaultQuantity.toString();
-                                  _price.text = option.defaultPrice.toString();
-                                });
-                              },
+                          if (widget.groceryListGrocery == null) {
+                            await groceries.addGroceryListGrocery(
+                              _groceryList!,
+                              _grocery!,
+                              _groceryCategory,
+                              int.parse(_quantity.text),
+                              _price.text,
                             );
-                          default:
-                            return const Loading();
-                        }
-                      },
-                    )
-                  : null,
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8),
-              child: TextFormField(
-                controller: _quantity,
-                keyboardType: TextInputType.number,
-                decoration: const InputDecoration(border: OutlineInputBorder(), labelText: "Quantity"),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8),
-              child: TextFormField(
-                controller: _price,
-                keyboardType: TextInputType.number,
-                decoration: const InputDecoration(border: OutlineInputBorder(), labelText: "Price"),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8),
-              child: TextButton(
-                onPressed: () async {
-                  if (_grocery == null) return;
+                          } else {
+                            await groceries.editGroceryListGrocery(
+                              widget.groceryListGrocery!,
+                              _groceryList!,
+                              int.parse(_quantity.text),
+                              _price.text,
+                            );
+                          }
 
-                  if (widget.groceryListGrocery == null) {
-                    await groceries.addGroceryListGrocery(
-                      _groceryList!,
-                      _grocery!,
-                      _groceryCategory,
-                      int.parse(_quantity.text),
-                      _price.text,
-                    );
-                  } else {
-                    await groceries.editGroceryListGrocery(
-                      widget.groceryListGrocery!,
-                      _groceryList!,
-                      int.parse(_quantity.text),
-                      _price.text,
-                    );
-                  }
-
-                  Navigator.of(context).pop();
-                },
-                child: const Text("Submit"),
-              ),
-            ),
-          ],
+                          Navigator.of(context).pop();
+                        },
+                        child: const Text("Submit"),
+                      ),
+                    ),
+                  ],
+                );
+              default:
+                return const Loading();
+            }
+          },
         ),
       ),
     );
