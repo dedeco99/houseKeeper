@@ -22,6 +22,7 @@ class _GroceryCardState extends State<GroceryCard> {
   Groceries groceries = GetIt.instance.get<Groceries>();
 
   dynamic _grocery;
+  GroceryList? _groceryList;
   GroceryCategory? _category;
   String _name = "";
   int _quantity = 1;
@@ -51,6 +52,7 @@ class _GroceryCardState extends State<GroceryCard> {
       _detail = GroceryDetail(grocery: _grocery);
     } else {
       _grocery = widget.groceryListGrocery;
+      _groceryList = widget.groceryListGrocery!.groceryList;
       _category = widget.groceryListGrocery!.groceryCategory;
       _name = widget.groceryListGrocery!.grocery.name;
       _quantity = widget.groceryListGrocery!.quantity;
@@ -91,7 +93,13 @@ class _GroceryCardState extends State<GroceryCard> {
               children: [
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                   Text(_name, style: const TextStyle(fontSize: 28, letterSpacing: 2)),
-                  _category != null ? Chip(label: Text(_category?.name ?? "")) : const Text("")
+                  Row(children: [
+                    Padding(
+                      padding: const EdgeInsets.only(right: 8),
+                      child: _groceryList != null ? Chip(label: Text(_groceryList?.name ?? "")) : const Text(""),
+                    ),
+                    _category != null ? Chip(label: Text(_category?.name ?? "")) : const Text(""),
+                  ]),
                 ]),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
