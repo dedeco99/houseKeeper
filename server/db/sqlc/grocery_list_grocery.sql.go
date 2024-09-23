@@ -115,6 +115,72 @@ func (q *Queries) EditGroceryListGrocery(ctx context.Context, arg EditGroceryLis
 	return i, err
 }
 
+const getAllGroceryListGroceries = `-- name: GetAllGroceryListGroceries :many
+SELECT
+  grocery_list_grocery.id, grocery_list_grocery.active, grocery_list_grocery.grocery_list, grocery_list_grocery.grocery, grocery_list_grocery.grocery_category, grocery_list_grocery.quantity, grocery_list_grocery.price, grocery_list_grocery.created,
+  grocery_list.name AS grocery_list_name,
+  grocery.name,
+  grocery_category.name AS grocery_category_name
+FROM
+  grocery_list_grocery
+  LEFT JOIN grocery ON grocery_list_grocery.grocery = grocery.id
+  LEFT JOIN grocery_category ON grocery_list_grocery.grocery_category = grocery_category.id
+  LEFT JOIN grocery_list ON grocery_list_grocery.grocery_list = grocery_list.id
+WHERE
+  grocery_list_grocery.active = TRUE
+ORDER BY
+  grocery_list_grocery.created DESC
+`
+
+type GetAllGroceryListGroceriesRow struct {
+	ID                  uuid.UUID      `json:"id"`
+	Active              bool           `json:"active"`
+	GroceryList         uuid.UUID      `json:"grocery_list"`
+	Grocery             uuid.UUID      `json:"grocery"`
+	GroceryCategory     uuid.NullUUID  `json:"grocery_category"`
+	Quantity            int16          `json:"quantity"`
+	Price               string         `json:"price"`
+	Created             time.Time      `json:"created"`
+	GroceryListName     sql.NullString `json:"grocery_list_name"`
+	Name                sql.NullString `json:"name"`
+	GroceryCategoryName sql.NullString `json:"grocery_category_name"`
+}
+
+func (q *Queries) GetAllGroceryListGroceries(ctx context.Context) ([]GetAllGroceryListGroceriesRow, error) {
+	rows, err := q.db.QueryContext(ctx, getAllGroceryListGroceries)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []GetAllGroceryListGroceriesRow{}
+	for rows.Next() {
+		var i GetAllGroceryListGroceriesRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.Active,
+			&i.GroceryList,
+			&i.Grocery,
+			&i.GroceryCategory,
+			&i.Quantity,
+			&i.Price,
+			&i.Created,
+			&i.GroceryListName,
+			&i.Name,
+			&i.GroceryCategoryName,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const getGroceryListGroceries = `-- name: GetGroceryListGroceries :many
 SELECT
   grocery_list_grocery.id, grocery_list_grocery.active, grocery_list_grocery.grocery_list, grocery_list_grocery.grocery, grocery_list_grocery.grocery_category, grocery_list_grocery.quantity, grocery_list_grocery.price, grocery_list_grocery.created,

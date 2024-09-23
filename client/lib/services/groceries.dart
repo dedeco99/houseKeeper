@@ -292,6 +292,8 @@ class Groceries {
 
       groceryLists.clear();
 
+      groceryLists.add(const GroceryList(id: "all", name: "All"));
+
       for (var i = 0; i < json["data"].length; i++) {
         groceryLists.add(GroceryList(id: json["data"][i]["id"], name: json["data"][i]["name"]));
       }

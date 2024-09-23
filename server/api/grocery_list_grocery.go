@@ -23,21 +23,33 @@ func (server *Server) getGroceryListGroceries(ctx *gin.Context) {
 		return
 	}
 
-	uuid, err := uuid.Parse(req.ID)
+	if req.ID == "all" {
+		groceryListGroceries, err := server.store.GetAllGroceryListGroceries(ctx)
 
-	if err != nil {
-		ctx.JSON(http.StatusBadRequest, errorResponse(err))
-		return
+		if err != nil {
+			ctx.JSON(http.StatusBadRequest, errorResponse(err))
+			return
+		}
+
+		ctx.JSON(http.StatusOK, response("GET_GROCERY_LIST_GROCERIES", groceryListGroceries))
+	} else {
+		uuid, err := uuid.Parse(req.ID)
+
+		if err != nil {
+			ctx.JSON(http.StatusBadRequest, errorResponse(err))
+			return
+		}
+
+		groceryListGroceries, err := server.store.GetGroceryListGroceries(ctx, uuid)
+
+		if err != nil {
+			ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+			return
+		}
+
+		ctx.JSON(http.StatusOK, response("GET_GROCERY_LIST_GROCERIES", groceryListGroceries))
 	}
 
-	groceryListGroceries, err := server.store.GetGroceryListGroceries(ctx, uuid)
-
-	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
-		return
-	}
-
-	ctx.JSON(http.StatusOK, response("GET_GROCERY_LIST_GROCERIES", groceryListGroceries))
 }
 
 type addGroceryListGroceryRequest struct {
