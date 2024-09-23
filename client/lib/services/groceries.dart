@@ -369,6 +369,7 @@ class Groceries {
   }
 
   Future<void> addGroceryListGrocery(
+    GroceryList groceryList,
     Grocery grocery,
     GroceryCategory? groceryCategory,
     int quantity,
@@ -380,7 +381,7 @@ class Groceries {
           scheme: dotenv.env["API_SCHEME"],
           host: dotenv.env["API_URL"],
           port: dotenv.env["API_PORT"] != null ? int.parse(dotenv.env["API_PORT"]!) : null,
-          path: "/api/grocery_lists/${groceryList!.id}",
+          path: "/api/grocery_lists/${groceryList.id}",
         ),
         headers: <String, String>{
           "Content-Type": "application/json; charset=UTF-8",
@@ -397,7 +398,7 @@ class Groceries {
 
       if (response.statusCode != 201) throw json["message"];
 
-      getGroceryListGroceries(groceryList!);
+      getGroceryListGroceries(groceryListSubject.value!);
     } catch (err) {
       print("error $err");
     }
@@ -427,7 +428,7 @@ class Groceries {
 
       if (response.statusCode != 200) throw json["message"];
 
-      getGroceryListGroceries(groceryList);
+      getGroceryListGroceries(groceryListSubject.value!);
     } catch (err) {
       print("error $err");
     }

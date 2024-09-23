@@ -80,12 +80,25 @@ func (server *Server) addGroceryListGrocery(ctx *gin.Context) {
 
 	groceryListUUID, err := uuid.Parse(req.ID)
 	groceryUUID, err2 := uuid.Parse(req.Data.Grocery)
-	groceryCategoryUUID, err3 := uuid.Parse(req.Data.GroceryCategory)
 
-	if err != nil || err2 != nil || err3 != nil {
+	if err != nil || err2 != nil {
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
 
 		return
+	}
+
+	var groceryCategoryUUID uuid.UUID
+
+	if req.Data.GroceryCategory != "" {
+		groceryCategoryUUID2, err := uuid.Parse(req.Data.GroceryCategory)
+
+		if err != nil {
+			ctx.JSON(http.StatusBadRequest, errorResponse(err))
+
+			return
+		}
+
+		groceryCategoryUUID = groceryCategoryUUID2
 	}
 
 	var price = "0"
@@ -96,7 +109,7 @@ func (server *Server) addGroceryListGrocery(ctx *gin.Context) {
 	arg := db.AddGroceryListGroceryParams{
 		GroceryList:     groceryListUUID,
 		Grocery:         groceryUUID,
-		GroceryCategory: uuid.NullUUID{UUID: groceryCategoryUUID, Valid: true},
+		GroceryCategory: uuid.NullUUID{UUID: groceryCategoryUUID, Valid: groceryCategoryUUID != uuid.Nil},
 		Quantity:        int16(req.Data.Quantity),
 		Price:           price,
 	}

@@ -36,12 +36,18 @@ func (server *Server) addGrocery(ctx *gin.Context) {
 		return
 	}
 
-	categoryUUID, err := uuid.Parse(req.Category)
+	var categoryUUID uuid.UUID
 
-	if err != nil {
-		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+	if req.Category != "" {
+		categoryUUID2, err := uuid.Parse(req.Category)
 
-		return
+		if err != nil {
+			ctx.JSON(http.StatusBadRequest, errorResponse(err))
+
+			return
+		}
+
+		categoryUUID = categoryUUID2
 	}
 
 	var defaultPrice = "0"
@@ -51,7 +57,7 @@ func (server *Server) addGrocery(ctx *gin.Context) {
 
 	arg := db.AddGroceryParams{
 		Name:            req.Name,
-		Category:        uuid.NullUUID{UUID: categoryUUID, Valid: true},
+		Category:        uuid.NullUUID{UUID: categoryUUID, Valid: categoryUUID != uuid.Nil},
 		DefaultQuantity: int16(req.DefaultQuantity),
 		DefaultPrice:    defaultPrice,
 	}
@@ -101,12 +107,18 @@ func (server *Server) editGrocery(ctx *gin.Context) {
 		return
 	}
 
-	categoryUUID, err := uuid.Parse(req.Data.Category)
+	var categoryUUID uuid.UUID
 
-	if err != nil {
-		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+	if req.Data.Category != "" {
+		categoryUUID2, err := uuid.Parse(req.Data.Category)
 
-		return
+		if err != nil {
+			ctx.JSON(http.StatusBadRequest, errorResponse(err))
+
+			return
+		}
+
+		categoryUUID = categoryUUID2
 	}
 
 	var defaultPrice = "0"
@@ -117,7 +129,7 @@ func (server *Server) editGrocery(ctx *gin.Context) {
 	arg := db.EditGroceryParams{
 		ID:              groceryUUID,
 		Name:            req.Data.Name,
-		Category:        uuid.NullUUID{UUID: categoryUUID, Valid: true},
+		Category:        uuid.NullUUID{UUID: categoryUUID, Valid: categoryUUID != uuid.Nil},
 		DefaultQuantity: int16(req.Data.DefaultQuantity),
 		DefaultPrice:    defaultPrice,
 	}

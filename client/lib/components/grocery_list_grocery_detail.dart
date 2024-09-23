@@ -58,44 +58,63 @@ class _GroceryListGroceryDetailState extends State<GroceryListGroceryDetail> {
               padding: widget.groceryListGrocery == null
                   ? const EdgeInsets.all(0)
                   : const EdgeInsets.fromLTRB(8, 35, 8, 8),
-              child: widget.groceryListGrocery != null
-                  ? StreamBuilder(
-                      stream: groceries.groceryLists$,
-                      builder: (BuildContext context, AsyncSnapshot snapshot) {
-                        switch (snapshot.connectionState) {
-                          case ConnectionState.active:
-                            final groceryLists = snapshot.data as List<GroceryList>;
+              child: StreamBuilder(
+                stream: groceries.groceryList$,
+                builder: (BuildContext context, AsyncSnapshot snapshot) {
+                  switch (snapshot.connectionState) {
+                    case ConnectionState.active:
+                      final groceryList = snapshot.data as GroceryList;
 
-                            return Autocomplete<GroceryList>(
-                              fieldViewBuilder: (context, textEditingController, focusNode, onFieldSubmitted) {
-                                return TextField(
-                                  decoration: const InputDecoration(
-                                    border: OutlineInputBorder(),
-                                    label: Text("Grocery List"),
-                                  ),
-                                  controller: textEditingController,
-                                  focusNode: focusNode,
-                                );
-                              },
-                              optionsBuilder: (textEditingValue) {
-                                if (textEditingValue.text == "") return groceryLists;
+                      return widget.groceryListGrocery != null || groceryList.id == "all"
+                          ? StreamBuilder(
+                              stream: groceries.groceryLists$,
+                              builder: (BuildContext context, AsyncSnapshot snapshot) {
+                                switch (snapshot.connectionState) {
+                                  case ConnectionState.active:
+                                    final groceryLists = snapshot.data as List<GroceryList>;
 
-                                return groceryLists.where((option) {
-                                  return option.name.toString().contains(textEditingValue.text.toLowerCase());
-                                });
+                                    return Autocomplete<GroceryList>(
+                                      fieldViewBuilder:
+                                          (context, textEditingController, focusNode, onFieldSubmitted) {
+                                        return TextField(
+                                          decoration: const InputDecoration(
+                                            border: OutlineInputBorder(),
+                                            label: Text("Grocery List"),
+                                          ),
+                                          controller: textEditingController,
+                                          focusNode: focusNode,
+                                        );
+                                      },
+                                      optionsBuilder: (textEditingValue) {
+                                        return textEditingValue.text == ""
+                                            ? groceryLists.where((l) => l.id != "all")
+                                            : groceryLists.where((l) {
+                                                return l.id != "all" &&
+                                                    l.name
+                                                        .toString()
+                                                        .contains(textEditingValue.text.toLowerCase());
+                                              });
+                                      },
+                                      displayStringForOption: (option) => option.name,
+                                      initialValue: TextEditingValue(
+                                          text: widget.groceryListGrocery != null
+                                              ? widget.groceryListGrocery!.groceryList.name
+                                              : ""),
+                                      onSelected: (option) {
+                                        setState(() => _groceryList = option);
+                                      },
+                                    );
+                                  default:
+                                    return const Loading();
+                                }
                               },
-                              displayStringForOption: (option) => option.name,
-                              initialValue: TextEditingValue(text: widget.groceryListGrocery!.groceryList.name),
-                              onSelected: (option) {
-                                setState(() => _groceryList = option);
-                              },
-                            );
-                          default:
-                            return const Loading();
-                        }
-                      },
-                    )
-                  : null,
+                            )
+                          : const Text("");
+                    default:
+                      return const Loading();
+                  }
+                },
+              ),
             ),
             Padding(
               padding: widget.groceryListGrocery == null
@@ -168,6 +187,7 @@ class _GroceryListGroceryDetailState extends State<GroceryListGroceryDetail> {
 
                   if (widget.groceryListGrocery == null) {
                     await groceries.addGroceryListGrocery(
+                      _groceryList!,
                       _grocery!,
                       _groceryCategory,
                       int.parse(_quantity.text),
